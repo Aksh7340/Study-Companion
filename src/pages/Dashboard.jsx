@@ -1,19 +1,45 @@
-import "./StudySetup.css"
-function Dashboard({subjects}){
-    return <>
-    {/* ---------- Subjects List Section ---------- */}
-      <h1>Your Subjects</h1>
+import { calculateSubjectWeight, remainingDays,getTotalWeight,distributeDailyHours } from "../Logic/studyPlanner";
 
-      <ul className="sub-list">
-        {subjects.map((subject, index) => (
-          <li key={index} className="list-item">
-            <div>
-              <h1>{subject.name}</h1>
-              <p>Total Chapters: {subject.chapters}</p>
-              <p>Difficulty: {subject.difficulty}</p>
-            </div>
-          </li>
-        ))}
-      </ul></>
+function Dashboard({ examData, subjects }) {
+  return (
+    <div>
+      <h2>Dashboard</h2>
+
+      {examData.map(exam => (
+        <div key={exam.examId} style={{ marginBottom: "30px" }}>
+          <h3>{exam.examName}</h3>
+          <p>Exam Date: {exam.date}</p>
+          <p>Remaining Days: {remainingDays(exam.date)}</p>
+
+          <table border="1">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Chapters</th>
+                <th>Difficulty</th>
+                <th>Weight</th>
+                <th>Hours Needed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subjects
+                .filter(sub => sub.examId === exam.examId)
+                
+                .map(sub => (
+                  <tr key={sub.id}>
+                    <td>{sub.name}</td>
+                    <td>{sub.chapters}</td>
+                    <td>{sub.difficulty}</td>
+                    <td>{calculateSubjectWeight(sub)}</td>
+                    <td>{distributeDailyHours(sub,subjects,exam)}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+  );
 }
+
 export default Dashboard;
