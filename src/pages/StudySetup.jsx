@@ -1,69 +1,105 @@
 import { useState } from "react";
-import "./StudySetup.css"
+import { v4 as uuidv4 } from "uuid";
+import "./StudySetup.css";
 
-function StudySetup({setSubjects}) {
+function StudySetup({ examData, setExamData, setSubjects }) {
 
-
-   // ---------- Subject-related state ----------
-  
-  const [name, setName] = useState("");
-  const [difficulty, setDifficulty] = useState("Easy");
-  const [chapters, setChapters] = useState(0);
-
-    // ---------- Exam-related state ----------
+  // -------- Exam state --------
+  const [examName, setExamName] = useState("");
   const [date, setDate] = useState("");
   const [studyHours, setStudyHours] = useState("");
 
-  // ---------- Add subject function ----------
+  // -------- Subject state --------
+  const [name, setName] = useState("");
+  const [chapters, setChapters] = useState("");
+  const [difficulty, setDifficulty] = useState("Easy");
+  const [selectedExamId, setSelectedExamId] = useState("");
 
-  function addSub() {
-    if (!name || !difficulty || !chapters) return;
+  // -------- Add Exam --------
+  function addExam() {
+    if (!examName || !date || !studyHours) return;
 
-    setSubjects((prev) => [
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate <= today) return;
+
+    setExamData(prev => [
       ...prev,
       {
+        examId: uuidv4(),
+        examName,
+        date,
+        studyHours: Number(studyHours)
+      }
+    ]);
+
+    setExamName("");
+    setDate("");
+    setStudyHours("");
+  }
+
+  // -------- Add Subject --------
+  function addSubject() {
+    if (!name || !chapters || !difficulty || !selectedExamId) return;
+
+    setSubjects(prev => [
+      ...prev,
+      {
+        id: uuidv4(),
         name,
         chapters: Number(chapters),
         difficulty,
-      },
+        examId: selectedExamId
+      }
     ]);
 
     setName("");
     setChapters("");
-    setDifficulty("");
+    setDifficulty("Easy");
+    setSelectedExamId("");
   }
 
-  
   return (
     <>
-      {/* ---------- Exam Details Section ---------- */}
+      {/* -------- Exam Section -------- */}
       <div className="exam-container">
-        <h3>Exam details</h3>
+        <h3>Exam Details</h3>
+
+        <input
+          type="text"
+          placeholder="Exam Name"
+          value={examName}
+          onChange={(e) => setExamName(e.target.value)}
+        />
 
         <input
           type="date"
-          placeholder="Enter the exam date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
 
         <input
-          type="text"
-          placeholder="Enter the study hours"
+          type="number"
+          min={1}
+          placeholder="Daily Study Hours"
           value={studyHours}
-          onChange={(e) =>setStudyHours(e.target.value)}
+          onChange={(e) => setStudyHours(e.target.value)}
         />
 
-        <button>Submit</button>
+        <button onClick={addExam}>Add Exam</button>
       </div>
 
-      {/* ---------- Subject Details Section ---------- */}
+      {/* -------- Subject Section -------- */}
       <div className="subject-container">
-        <h3>Subject details</h3>
+        <h3>Subject Details</h3>
 
         <input
           type="text"
-          placeholder="Enter the subject name"
+          placeholder="Subject Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -71,29 +107,34 @@ function StudySetup({setSubjects}) {
         <input
           type="number"
           min={1}
-          placeholder="Enter the number of the chapters"
+          placeholder="Chapters"
           value={chapters}
           onChange={(e) => setChapters(e.target.value)}
         />
 
         <select
-          id="Difficulty"
-          name="Difficulty[]"
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value)}
         >
-          <option value="" disabled>
-            Select difficulty
-          </option>
-          <option value="Hard">Hard</option>
-          <option value="Medium">Medium</option>
           <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
         </select>
 
-        <button onClick={addSub}>Add Subject</button>
-      </div>
+        <select
+          value={selectedExamId}
+          onChange={(e) => setSelectedExamId(e.target.value)}
+        >
+          <option value="" disabled>Select Exam</option>
+          {examData.map(exam => (
+            <option key={exam.examId} value={exam.examId}>
+              {exam.examName}
+            </option>
+          ))}
+        </select>
 
-      
+        <button onClick={addSubject}>Add Subject</button>
+      </div>
     </>
   );
 }
