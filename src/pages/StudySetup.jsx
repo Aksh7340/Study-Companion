@@ -1,18 +1,21 @@
 import { useState } from "react";
 import "./StudySetup.css"
 
-function StudySetup() {
-  // ---------- Subject-related state ----------
-  const [subjects, setSubjects] = useState([]);
+function StudySetup({setSubjects}) {
+
+
+   // ---------- Subject-related state ----------
+  
   const [name, setName] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [chapters, setChapters] = useState(0);
 
-  // ---------- Exam-related state ----------
+    // ---------- Exam-related state ----------
   const [date, setDate] = useState("");
   const [studyHours, setStudyHours] = useState("");
 
   // ---------- Add subject function ----------
+
   function addSub() {
     if (!name || !difficulty || !chapters) return;
 
@@ -30,6 +33,7 @@ function StudySetup() {
     setDifficulty("");
   }
 
+  
   return (
     <>
       {/* ---------- Exam Details Section ---------- */}
@@ -47,7 +51,7 @@ function StudySetup() {
           type="text"
           placeholder="Enter the study hours"
           value={studyHours}
-          onChange={(e) => setStudyHours((e) => setStudyHours(e.target.value))}
+          onChange={(e) =>setStudyHours(e.target.value)}
         />
 
         <button>Submit</button>
@@ -89,20 +93,7 @@ function StudySetup() {
         <button onClick={addSub}>Add Subject</button>
       </div>
 
-      {/* ---------- Subjects List Section ---------- */}
-      <h1>Your Subjects</h1>
-
-      <ul className="sub-list">
-        {subjects.map((subject, index) => (
-          <li key={index} className="list-item">
-            <div>
-              <h1>{subject.name}</h1>
-              <p>Total Chapters: {subject.chapters}</p>
-              <p>Difficulty: {subject.difficulty}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      
     </>
   );
 }
