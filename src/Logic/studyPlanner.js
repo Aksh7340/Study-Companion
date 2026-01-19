@@ -38,11 +38,27 @@ export function getTotalWeight(subjects, examId) {
 
 export function distributeDailyHours(subject, subjects, exam) {
   const totalWeight = getTotalWeight(subjects, exam.examId);
+  if (totalWeight === 0 || exam.studyHours === 0) {
+    return "0 h 0 min";
+  }
+
+  // 1. Convert total study time to minutes
+  const totalMinutes = exam.studyHours * 60;
+
+  // 2. Calculate raw minutes for this subject
   const subjectWeight = calculateSubjectWeight(subject);
+  const rawMinutes = totalMinutes * (subjectWeight / totalWeight);
 
-  if (totalWeight === 0) return 0;
+  // 3. Floor to avoid overflow
+  const finalMinutes = Math.floor(rawMinutes);
 
-  const ratio = subjectWeight / totalWeight;
+  // 4. Convert minutes → hours + minutes
+  const hours = Math.trunc(finalMinutes / 60);
+  const minutes = finalMinutes % 60;
 
-  return  exam.studyHours * ratio .toFixed(2);
+  return `${hours} h ${minutes} min`;
+}
+
+export function examPriority(){
+  
 }
