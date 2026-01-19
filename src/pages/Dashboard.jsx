@@ -5,6 +5,7 @@ function Dashboard({ examData, subjects }) {
     <div>
       <h2>Dashboard</h2>
 
+
       {examData.map(exam => (
         <div key={exam.examId} style={{ marginBottom: "30px" }}>
           <h3>{exam.examName}</h3>
@@ -18,7 +19,7 @@ function Dashboard({ examData, subjects }) {
                 <th>Chapters</th>
                 <th>Difficulty</th>
                 <th>Weight</th>
-                <th>Hours Needed</th>
+                <th>Daily Hours Needed</th>
               </tr>
             </thead>
             <tbody>
