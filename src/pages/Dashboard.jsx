@@ -6,7 +6,12 @@ function Dashboard({ examData, subjects }) {
       <h2>Dashboard</h2>
 
 
-      {examData.map(exam => (
+      {examData
+        .slice() // create a copy to avoid mutating state
+        .sort(
+          (a, b) => remainingDays(a.date) - remainingDays(b.date)
+        )
+        .map(exam => (
         <div key={exam.examId} style={{ marginBottom: "30px" }}>
           <h3>{exam.examName}</h3>
           <p>Exam Date: {exam.date}</p>
@@ -25,7 +30,7 @@ function Dashboard({ examData, subjects }) {
             <tbody>
               {subjects
                 .filter(sub => sub.examId === exam.examId)
-                
+                .sort((a, b) => calculateSubjectWeight(b) - calculateSubjectWeight(a))
                 .map(sub => (
                   <tr key={sub.id}>
                     <td>{sub.name}</td>
