@@ -11,10 +11,10 @@ export function remainingDays(date) {
 }
 
 export function getDifficultyWeight(subject){
-    if(subject.difficilty=="Easy"){
+    if(subject.difficulty=="Easy"){
         return 1
     }
-    else if(subject.difficilty=="Medium"){
+    else if(subject.difficulty=="Medium"){
       return 2
     }
     else{
