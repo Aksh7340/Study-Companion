@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export default function ExamForm({ setExamData }) {
+export default function ExamForm({ setExamData, examData }) {
+
 
   const [examName, setExamName] = useState("");
   const [date, setDate] = useState("");
@@ -9,12 +10,27 @@ export default function ExamForm({ setExamData }) {
   const [errors, setErrors] = useState({});
 
   function validate() {
+    console.log("addExam called");
     const newErrors = {};
+    const trimmedName = examName.trim();
 
-    if (!examName.trim()) {
-      newErrors.examName = "Exam name is required";
-    }
+    // Exam name validation
+   
 
+if (!trimmedName) {
+  newErrors.examName = "Exam name is required";
+} else {
+  const examExists = examData.some(
+    exam =>
+      exam.examName.trim().toLowerCase() === trimmedName.toLowerCase()
+  );
+
+  if (examExists) {
+    newErrors.examName = "Exam already exists";
+  }
+}
+
+    // Date validation
     if (!date) {
       newErrors.date = "Exam date is required";
     } else {
@@ -29,6 +45,7 @@ export default function ExamForm({ setExamData }) {
       }
     }
 
+    // Study hours validation
     if (!studyHours) {
       newErrors.studyHours = "Study hours required";
     } else if (Number(studyHours) <= 0) {
@@ -36,23 +53,26 @@ export default function ExamForm({ setExamData }) {
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   }
 
   function addExam() {
     if (!validate()) return;
+    
+
+    const trimmedName = examName.trim();
 
     setExamData(prev => [
       ...prev,
       {
         examId: uuidv4(),
-        examName,
+        examName: trimmedName,
         date,
         studyHours: Number(studyHours)
       }
     ]);
 
+    // reset form
     setExamName("");
     setDate("");
     setStudyHours("");
