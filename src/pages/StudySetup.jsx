@@ -10,7 +10,7 @@ function StudySetup({ examData, setExamData, setSubjects,subjects }) {
 
   return (
     <>
-      <ExamForm setExamData={setExamData}></ExamForm>
+      <ExamForm setExamData={setExamData} examData={examData}></ExamForm>
       <SubjectForm examData={examData} setSubjects={setSubjects} subjects={subjects}></SubjectForm>
     </>
   );
