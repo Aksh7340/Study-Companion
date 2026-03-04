@@ -2,7 +2,7 @@ import ExamForm from "../Components/Setup/examForm";
 import SubjectForm from "../Components/Setup/SubjectForm";
 import "./StudySetup.css";
 
-function StudySetup({ examData, setExamData, setSubjects }) {
+function StudySetup({ examData, setExamData, setSubjects,subjects }) {
 
   
 
