@@ -13,8 +13,42 @@ import SubjectDetails from "./Components/Subjects/SubjectDetails";
 
 function App() {
 
+
   const [examData, setExamData] = useState([]);
   const [subjects, setSubjects] = useState([]);
+
+  function deleteExam(examId) {
+  setExamData(prev =>
+    prev.filter(exam => exam.examId !== examId)
+  );
+}
+
+  function deleteSubject(subjectId){
+    setSubjects(prev =>
+      prev.filter(subject => subject.subjectId!=subjectId)
+    )
+  }
+
+  function updateExam(updatedExam) {
+  setExamData(prev =>
+    prev.map(exam =>
+      exam.examId === updatedExam.examId
+        ? updatedExam
+        : exam
+    )
+  );
+}
+function updateSubject(updatedSubject) {
+
+  setSubjects(prev =>
+    prev.map(sub =>
+      sub.id === updatedSubject.id
+        ? updatedSubject
+        : sub
+    )
+  );
+
+}
 
   return (
     <div>
@@ -53,6 +87,7 @@ function App() {
             element={
               <Dashboard
                 examData={examData}
+                deleteExam={deleteExam}
               />
             }
           />
@@ -64,6 +99,8 @@ function App() {
               <ExamDetails
                 examData={examData}
                 subjects={subjects}
+                deleteSubject={deleteSubject}
+                updateExam={updateExam}
               />
             }
           />
@@ -75,6 +112,7 @@ function App() {
               <SubjectDetails
                 subjects={subjects}
                 examData={examData}
+                updateSubject={updateSubject}
               />
             }
           />
