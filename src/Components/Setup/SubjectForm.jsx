@@ -4,31 +4,47 @@ import { v4 as uuidv4 } from "uuid";
 export default function SubjectForm({ examData, subjects, setSubjects }) {
 
   const [name, setName] = useState("");
-  const [chapters, setChapters] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [selectedExamId, setSelectedExamId] = useState("");
+
+  const [chapterName, setChapterName] = useState("");
+  const [chapters, setChapters] = useState([]);
+
   const [errors, setErrors] = useState({});
+
+  function addChapter() {
+    if (!chapterName.trim()) return;
+
+    const newChapter = {
+      id: uuidv4(),
+      name: chapterName.trim(),
+      completed: false,
+      mockScore: null
+    };
+
+    setChapters(prev => [...prev, newChapter]);
+    setChapterName("");
+  }
+
+  function removeChapter(id) {
+    setChapters(prev => prev.filter(ch => ch.id !== id));
+  }
 
   function validate() {
     const newErrors = {};
 
     if (!name.trim()) {
       newErrors.name = "Subject name is required";
-    } else if (name.trim().length < 3) {
-      newErrors.name = "Subject name must be at least 3 characters";
-    }
-
-    if (!chapters) {
-      newErrors.chapters = "Chapters required";
-    } else if (Number(chapters) <= 0) {
-      newErrors.chapters = "Chapters must be greater than 0";
     }
 
     if (!selectedExamId) {
       newErrors.selectedExamId = "Please select an exam";
     }
 
-    // Duplicate subject check (within same exam)
+    if (chapters.length === 0) {
+      newErrors.chapters = "Add at least one chapter";
+    }
+
     const duplicate = subjects.some(
       sub =>
         sub.examId === selectedExamId &&
@@ -45,28 +61,29 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
   }
 
   function addSubject() {
+
     if (!validate()) return;
 
-    setSubjects(prev => [
-      ...prev,
-      {
-        id: uuidv4(),
-        name: name.trim(),
-        chapters: Number(chapters),
-        difficulty,
-        examId: selectedExamId
-      }
-    ]);
+    const newSubject = {
+      id: uuidv4(),
+      name: name.trim(),
+      difficulty,
+      examId: selectedExamId,
+      chapters
+    };
+
+    setSubjects(prev => [...prev, newSubject]);
 
     setName("");
-    setChapters("");
     setDifficulty("Easy");
     setSelectedExamId("");
+    setChapters([]);
     setErrors({});
   }
 
   return (
     <div className="subject-container">
+
       <h3>Subject Details</h3>
 
       <input
@@ -76,15 +93,6 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
         onChange={(e) => setName(e.target.value)}
       />
       {errors.name && <p className="error">{errors.name}</p>}
-
-      <input
-        type="number"
-        min={1}
-        placeholder="Chapters"
-        value={chapters}
-        onChange={(e) => setChapters(e.target.value)}
-      />
-      {errors.chapters && <p className="error">{errors.chapters}</p>}
 
       <select
         value={difficulty}
@@ -101,17 +109,58 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
         disabled={examData.length === 0}
       >
         <option value="" disabled>Select Exam</option>
+
         {examData.map(exam => (
           <option key={exam.examId} value={exam.examId}>
             {exam.examName}
           </option>
         ))}
+
       </select>
+
       {errors.selectedExamId && (
         <p className="error">{errors.selectedExamId}</p>
       )}
 
-      <button onClick={addSubject}>Add Subject</button>
+      <hr />
+
+      <h4>Add Chapters</h4>
+
+      <input
+        type="text"
+        placeholder="Chapter name"
+        value={chapterName}
+        onChange={(e) => setChapterName(e.target.value)}
+      />
+
+      <button onClick={addChapter}>
+        Add Chapter
+      </button>
+
+      {errors.chapters && (
+        <p className="error">{errors.chapters}</p>
+      )}
+
+      <div>
+
+        {chapters.map(ch => (
+          <div key={ch.id} className="card">
+
+            {ch.name}
+
+            <button onClick={() => removeChapter(ch.id)}>
+              Remove
+            </button>
+
+          </div>
+        ))}
+
+      </div>
+
+      <button onClick={addSubject}>
+        Add Subject
+      </button>
+
     </div>
   );
 }
