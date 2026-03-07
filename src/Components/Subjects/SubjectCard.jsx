@@ -4,7 +4,8 @@ export default function SubjectCard({
   subject,
   weight,
   hours,
-  examId
+  examId,
+  deleteSubject
 }) {
 
   const navigate = useNavigate();
@@ -23,7 +24,16 @@ export default function SubjectCard({
       <p>Weight: {weight}</p>
 
       <p>Daily Study Time: {hours}</p>
-
+       <button className="button"
+       onClick={(e)=>{
+          e.stopPropagation();
+          alert(`Want to delete ${subject.name}`)
+          deleteSubject(subject.subjectId);
+       }
+      
+       }>
+        Delete
+       </button>
     </div>
   );
 }
