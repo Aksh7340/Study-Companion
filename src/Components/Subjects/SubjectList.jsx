@@ -5,7 +5,7 @@ import {
   distributeDailyHours
 } from "../../Logic/studyPlanner";
 
-export default function SubjectList({ subjects, exam }) {
+export default function SubjectList({ subjects, exam,deleteSubject }) {
 
   const examSubjects = subjects
     .filter(sub => sub.examId === exam.examId)
@@ -39,6 +39,7 @@ export default function SubjectList({ subjects, exam }) {
             examId={exam.examId}
             weight={weight}
             hours={hours}
+            deleteSubject={deleteSubject}
           />
         );
       })}
