@@ -25,7 +25,7 @@ export function getDifficultyWeight(subject){
 
 export function calculateSubjectWeight(subject){
     const difficiltyWeight=getDifficultyWeight(subject)
-    return difficiltyWeight*subject.chapters;
+    return difficiltyWeight*subject.chapters.length;
 }
 
 export function getTotalWeight(subjects, examId) {
