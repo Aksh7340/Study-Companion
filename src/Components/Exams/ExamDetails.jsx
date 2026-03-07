@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 
 import SubjectList from "../Subjects/SubjectList";
+import ExamHeader from "../Exams/ExamHeader"
 
 export default function ExamDetails({ examData, subjects }) {
 
@@ -20,19 +21,9 @@ export default function ExamDetails({ examData, subjects }) {
       >
         Back
       </button>
-
-      <h2>{exam.examName}</h2>
-
-      <p>
-        <strong>Date:</strong> {exam.date}
-      </p>
-
-      <p>
-        <strong>Daily Study Hours:</strong> {exam.studyHours}
-      </p>
-
-      <hr />
-
+      
+      <ExamHeader exam={exam}></ExamHeader>
+      
       <h3>Subjects</h3>
 
       <SubjectList

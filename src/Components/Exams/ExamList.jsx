@@ -2,7 +2,7 @@ import { remainingDays } from "../../Logic/studyPlanner";
 import ExamCard from "./ExamCard";
 
 export default function ExamList({ examData, onSelectExam }) {
-   console.log("Type of onSelectExam ",typeof(onSelectExam));
+
    
   return (
     <>
