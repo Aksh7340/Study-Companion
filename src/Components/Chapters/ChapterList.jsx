@@ -1,15 +1,40 @@
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import ChapterCard from "./ChapterCard";
 
 export default function ChapterList({ subject, updateSubject }) {
 
-  const chapters = subject.chapters;
+  const [newChapterName, setNewChapterName] = useState("");
 
-  function toggleCompletion(chapterId) {
+  const chapters = subject.chapters || [];
 
-    const updatedChapters = chapters.map(ch =>
-      ch.id === chapterId
-        ? { ...ch, completed: !ch.completed }
-        : ch
+  function addChapter() {
+
+    const name = newChapterName.trim();
+
+    if (!name) return;
+
+    const newChapter = {
+      id: uuidv4(),
+      name,
+      completed: false,
+      mockTests: []
+    };
+
+    const updatedChapters = [...chapters, newChapter];
+
+    updateSubject({
+      ...subject,
+      chapters: updatedChapters
+    });
+
+    setNewChapterName("");
+  }
+
+  function deleteChapter(chapterId) {
+
+    const updatedChapters = chapters.filter(
+      ch => ch.id !== chapterId
     );
 
     updateSubject({
@@ -18,20 +43,50 @@ export default function ChapterList({ subject, updateSubject }) {
     });
   }
 
-  if (!chapters || chapters.length === 0) {
-    return <p>No chapters added yet</p>;
-  }
+ 
+
+
 
   return (
-    <div className="subject-list">
+    <div>
 
-      {chapters.map(chapter => (
-        <ChapterCard
-          key={chapter.id}
-          chapter={chapter}
-          toggleCompletion={toggleCompletion}
+      <h3>Chapters</h3>
+
+      {/* Add Chapter */}
+      <div style={{ marginBottom: "15px" }}>
+
+        <input
+          placeholder="New Chapter Name"
+          value={newChapterName}
+          onChange={(e) => setNewChapterName(e.target.value)}
         />
-      ))}
+
+        <button
+          className="button"
+          onClick={addChapter}
+        >
+          Add Chapter
+        </button>
+
+      </div>
+
+      {chapters.length === 0 && (
+        <p>No chapters added yet</p>
+      )}
+
+      <div className="subject-list">
+
+        {chapters.map(chapter => (
+          <ChapterCard
+            key={chapter.id}
+            chapter={chapter}
+            deleteChapter={deleteChapter}
+          
+         
+          />
+        ))}
+
+      </div>
 
     </div>
   );
