@@ -1,64 +1,194 @@
+// ================================
+// Date Logic
+// ================================
+
 export function remainingDays(date) {
+
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setHours(0,0,0,0);
 
   const targetDate = new Date(date);
-  targetDate.setHours(0, 0, 0, 0);
+  targetDate.setHours(0,0,0,0);
 
   return Math.ceil(
     (targetDate - today) / (1000 * 60 * 60 * 24)
   );
+
 }
 
+
+// ================================
+// Subject Difficulty Logic
+// ================================
+
 export function getDifficultyWeight(subject){
-    if(subject.difficulty=="Easy"){
-        return 1
-    }
-    else if(subject.difficulty=="Medium"){
-      return 2
-    }
-    else{
-        return 3
-    }
-  
+
+  if(subject.difficulty === "Easy") return 1;
+  if(subject.difficulty === "Medium") return 2;
+  return 3;
+
 }
 
 export function calculateSubjectWeight(subject){
-    const difficiltyWeight=getDifficultyWeight(subject)
-    return difficiltyWeight*subject.chapters.length;
+
+  const weight = getDifficultyWeight(subject);
+
+  const chapters = subject.chapters || [];
+
+  return weight * chapters.length;
+
 }
 
-export function getTotalWeight(subjects, examId) {
+
+// ================================
+// Chapter Analytics
+// ================================
+
+export function getChapterTestsTaken(chapter){
+
+  const tests = chapter.mockTests || [];
+
+  return tests.length;
+
+}
+
+
+export function getChapterAverageScore(chapter){
+
+  const tests = chapter.mockTests || [];
+
+  if(tests.length === 0) return 0;
+
+  const total =
+    tests.reduce((sum,test)=> sum + test.score ,0);
+
+  return total / tests.length;
+
+}
+
+
+export function getChapterBestScore(chapter){
+
+  const tests = chapter.mockTests || [];
+
+  if(tests.length === 0) return null;
+
+  return Math.max(...tests.map(t => t.score));
+
+}
+
+
+// Progress is based on average score
+export function getChapterProgress(chapter){
+
+  const avg = getChapterAverageScore(chapter);
+
+  if(avg === 0) return 0;
+
+  const progress = (avg / 10) * 100;
+
+  return Math.round(progress);
+
+}
+
+
+// Status derived from progress
+export function getChapterStatus(chapter){
+
+  const progress = getChapterProgress(chapter);
+
+  if(progress === 0) return "Not Started";
+
+  if(progress < 80) return "In Progress";
+
+  return "Completed";
+
+}
+
+
+// ================================
+// Subject Progress
+// ================================
+
+export function getSubjectProgress(subject){
+
+  const chapters = subject.chapters || [];
+
+  if(chapters.length === 0) return 0;
+
+  const total =
+    chapters.reduce(
+      (sum,ch) => sum + getChapterProgress(ch),
+      0
+    );
+
+  return Math.round(total / chapters.length);
+
+}
+
+
+// ================================
+// Exam Progress
+// ================================
+
+export function getExamProgress(examId, subjects){
+
+  const examSubjects =
+    subjects.filter(s => s.examId === examId);
+
+  if(examSubjects.length === 0) return 0;
+
+  const total =
+    examSubjects.reduce(
+      (sum,s) => sum + getSubjectProgress(s),
+      0
+    );
+
+  return Math.round(total / examSubjects.length);
+
+}
+
+
+// ================================
+// Study Planner
+// ================================
+
+export function getTotalWeight(subjects, examId){
+
   return subjects
     .filter(subject => subject.examId === examId)
-    .reduce((total, subject) => {
-      return total + calculateSubjectWeight(subject);
-    }, 0);
+    .reduce(
+      (total,subject)=>
+        total + calculateSubjectWeight(subject),
+      0
+    );
+
 }
 
-export function distributeDailyHours(subject, subjects, exam) {
-  const totalWeight = getTotalWeight(subjects, exam.examId);
-  if (totalWeight === 0 || exam.studyHours === 0) {
+
+export function distributeDailyHours(subject, subjects, exam){
+
+  const totalWeight =
+    getTotalWeight(subjects, exam.examId);
+
+  if(totalWeight === 0 || exam.studyHours === 0){
     return "0 h 0 min";
   }
 
-  // 1. Convert total study time to minutes
   const totalMinutes = exam.studyHours * 60;
 
-  // 2. Calculate raw minutes for this subject
-  const subjectWeight = calculateSubjectWeight(subject);
-  const rawMinutes = totalMinutes * (subjectWeight / totalWeight);
+  const subjectWeight =
+    calculateSubjectWeight(subject);
 
-  // 3. Floor to avoid overflow
+  const rawMinutes =
+    totalMinutes * (subjectWeight / totalWeight);
+
   const finalMinutes = Math.floor(rawMinutes);
 
-  // 4. Convert minutes → hours + minutes
   const hours = Math.trunc(finalMinutes / 60);
+
   const minutes = finalMinutes % 60;
 
   return `${hours} h ${minutes} min`;
-}
 
-export function examPriority(){
-  
 }
