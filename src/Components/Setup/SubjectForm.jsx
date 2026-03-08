@@ -19,7 +19,7 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
       id: uuidv4(),
       name: chapterName.trim(),
       completed: false,
-      mockScore: null
+      mockTests: []
     };
 
     setChapters(prev => [...prev, newChapter]);
