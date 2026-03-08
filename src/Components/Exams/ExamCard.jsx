@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { remainingDays } from "../../Logic/studyPlanner";
+import { getExamProgress, remainingDays } from "../../Logic/studyPlanner";
+import ProgressBar from "../UI/ProgressBar";
 
-export default function ExamCard({ exam, deleteExam }) {
+export default function ExamCard({ exam, deleteExam,subjects }) {
 
   const navigate = useNavigate();
 
@@ -16,6 +17,13 @@ export default function ExamCard({ exam, deleteExam }) {
       <p>Date: {exam.date}</p>
 
       <p>Days Remaining: {remainingDays(exam.date)}</p>
+
+      <ProgressBar
+      progress={getExamProgress(exam.examId,subjects)}
+      label="Exam Progress"
+      >
+
+      </ProgressBar>
 
       <button className="button"
         onClick={(e) => {
