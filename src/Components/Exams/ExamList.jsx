@@ -1,7 +1,7 @@
 import { remainingDays } from "../../Logic/studyPlanner";
 import ExamCard from "./ExamCard";
 
-export default function ExamList({ examData, onSelectExam , deleteExam }) {
+export default function ExamList({ examData, onSelectExam , deleteExam ,subjects}) {
 
    
   return (
@@ -20,6 +20,7 @@ export default function ExamList({ examData, onSelectExam , deleteExam }) {
               remainingDays={days}
               onClick={() => onSelectExam(exam)}
               deleteExam={deleteExam}
+              subjects={subjects}
             />
             
           );
