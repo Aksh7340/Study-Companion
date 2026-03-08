@@ -8,8 +8,10 @@ import StudySetup from "./pages/StudySetup";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 
+
 import ExamDetails from "./Components/Exams/ExamDetails";
 import SubjectDetails from "./Components/Subjects/SubjectDetails";
+import ChapterDetails from "./Components/Chapters/ChapterDetails";
 
 function App() {
 
@@ -88,6 +90,7 @@ function updateSubject(updatedSubject) {
               <Dashboard
                 examData={examData}
                 deleteExam={deleteExam}
+                subjects={subjects}
               />
             }
           />
@@ -101,6 +104,8 @@ function updateSubject(updatedSubject) {
                 subjects={subjects}
                 deleteSubject={deleteSubject}
                 updateExam={updateExam}
+                
+                
               />
             }
           />
@@ -116,6 +121,16 @@ function updateSubject(updatedSubject) {
               />
             }
           />
+          {/*Chapter Details */}
+          <Route
+         path="/dashboard/:examId/:subjectId/:chapterId"
+         element={
+       <ChapterDetails
+      subjects={subjects}
+      updateSubject={updateSubject}
+    />
+  }
+/>
 
           {/* 404 Page */}
           <Route
