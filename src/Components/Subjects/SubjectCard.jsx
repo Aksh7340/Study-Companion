@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import ProgressBar from "../UI/ProgressBar";
+import { getSubjectProgress } from "../../Logic/studyPlanner";
 
 export default function SubjectCard({
   subject,
@@ -24,6 +26,11 @@ export default function SubjectCard({
       <p>Weight: {weight}</p>
 
       <p>Daily Study Time: {hours}</p>
+
+      <ProgressBar
+      progress={getSubjectProgress(subject)}
+      label="Subject Progress"></ProgressBar>
+
        <button className="button"
        onClick={(e)=>{
           e.stopPropagation();
