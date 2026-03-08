@@ -127,7 +127,7 @@ export default function SubjectDetails({
 
     <hr />
 
-     <h3>Chapters</h3>
+   
 
 
 <ChapterList
