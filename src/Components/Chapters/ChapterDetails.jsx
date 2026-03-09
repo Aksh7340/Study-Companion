@@ -7,11 +7,12 @@ import {
   getChapterProgress,
   getChapterStatus
 } from "../../Logic/studyPlanner";
+import MockHistory from "../MockTest/MockHistory";
 
 
 export default function ChapterDetails({
   subjects,
-  updateSubject
+  
 }) {
 
   const { examId, subjectId, chapterId } = useParams();
@@ -42,34 +43,7 @@ export default function ChapterDetails({
   const status = getChapterStatus(chapter);
 
 
-  function startMockTest(){
-
-    const score = Math.floor(Math.random()*10)+1;
-
-    const newTest = {
-      id: Date.now().toString(),
-      score,
-      total: 10,
-      date: new Date().toLocaleDateString()
-    };
-
-    const updatedChapters =
-      subject.chapters.map(ch =>
-        ch.id === chapterId
-          ? {
-              ...ch,
-              mockTests:[...ch.mockTests,newTest]
-            }
-          : ch
-      );
-
-    updateSubject({
-      ...subject,
-      chapters: updatedChapters
-    });
-
-  }
-
+ 
 
   return (
 
@@ -102,35 +76,24 @@ export default function ChapterDetails({
 
       <p>{progress}% Complete</p>
 
+      <hr></hr>
+     
+     <button
+  className="button"
+  onClick={() =>
+    navigate(
+      `/dashboard/${examId}/${subjectId}/${chapterId}/mock`
+    )
+  }
+>
+  Start Mock Test
+</button>
 
-      <hr/>
+<MockHistory chapter={chapter}></MockHistory>
 
-      <h3>Mock Test History</h3>
+   
 
-      {chapter.mockTests.length === 0 &&
-        <p>No tests yet</p>
-      }
-
-      {chapter.mockTests.map(test => (
-
-        <div
-          key={test.id}
-          className="card"
-        >
-          <p>Score: {test.score}/{test.total}</p>
-          <p>Date: {test.date}</p>
-        </div>
-
-      ))}
-
-
-      <button
-        className="button"
-        onClick={startMockTest}
-      >
-        Start Mock Test
-      </button>
-
+     
     </div>
 
   );
