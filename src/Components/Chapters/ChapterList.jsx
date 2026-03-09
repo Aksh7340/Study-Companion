@@ -17,7 +17,7 @@ export default function ChapterList({ subject, updateSubject }) {
     const newChapter = {
       id: uuidv4(),
       name,
-      completed: false,
+     
       mockTests: []
     };
 
