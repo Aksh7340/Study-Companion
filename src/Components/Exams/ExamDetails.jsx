@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import SubjectList from "../Subjects/SubjectList";
+import SubjectPieChart from "../Analytics/SubjectPieChart";
 
 export default function ExamDetails({ examData, subjects, updateExam,deleteSubject }) {
 
@@ -105,6 +106,9 @@ export default function ExamDetails({ examData, subjects, updateExam,deleteSubje
       )}
 
       <hr />
+      <SubjectPieChart
+      subjects={subjects}
+      examId={exam.examId}></SubjectPieChart>
 
       <h3>Subjects</h3>
 

@@ -7,6 +7,8 @@ import {
 } from "../../Logic/studyPlanner";
 
 import ChapterList from "../Chapters/ChapterList";
+import ChapterPerformanceBar from "../Analytics/ChapterPerformanceBar";
+
 
 export default function SubjectDetails({
   subjects,
@@ -74,10 +76,6 @@ export default function SubjectDetails({
           </p>
 
           <p>
-            <strong>Weight:</strong> {weight}
-          </p>
-
-          <p>
             <strong>Daily Study Time:</strong> {hours}
           </p>
 
@@ -135,6 +133,8 @@ export default function SubjectDetails({
   updateSubject={updateSubject}
 />
 
+<ChapterPerformanceBar
+subject={subject}></ChapterPerformanceBar>
     </div>
   );
 }
