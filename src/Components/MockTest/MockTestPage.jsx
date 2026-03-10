@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { v4 as uuidv4 } from "uuid";
 
 import { useParams } from "react-router-dom";
 import QuestionCard from "./QuestionCard";
@@ -82,7 +82,7 @@ export default function MockTestPage({
     setSubmitted(true);
 
     const newTest = {
-      id: Date.now(),
+      id: uuidv4(),
       date: new Date().toISOString(),
       score: correct,
       total: totalQuestions
