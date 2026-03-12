@@ -5,45 +5,72 @@ import {
   distributeDailyHours
 } from "../../Logic/studyPlanner";
 
-export default function SubjectList({ subjects, exam,deleteSubject }) {
+export default function SubjectList({
+  subjects = [],
+  exam,
+  deleteSubject
+}) {
+
+  if (!exam) {
+    return <p>No exam selected</p>;
+  }
+
+
+  /* =========================
+     Filter Subjects by Exam
+  ========================= */
 
   const examSubjects = subjects
-    .filter(sub => sub.examId === exam.examId)
-    .sort(
-      (a, b) =>
-        calculateSubjectWeight(b) -
-        calculateSubjectWeight(a)
-    );
+    .filter(sub =>
+      String(sub.examId) === String(exam._id)
+    )
+    .map(sub => {
+
+      const weight = calculateSubjectWeight(sub);
+
+      return {
+        subject: sub,
+        weight
+      };
+
+    })
+    .sort((a, b) => b.weight - a.weight);
+
 
   if (examSubjects.length === 0) {
     return <p>No subjects added yet</p>;
   }
 
+
   return (
+
     <div className="subject-list">
 
-      {examSubjects.map(sub => {
-
-        const weight = calculateSubjectWeight(sub);
+      {examSubjects.map(({ subject, weight }) => {
 
         const hours = distributeDailyHours(
-          sub,
+          subject,
           subjects,
           exam
         );
 
         return (
+
           <SubjectCard
-            key={sub.id}
-            subject={sub}
-            examId={exam.examId}
+            key={subject._id}
+            subject={subject}
+            examId={exam._id}
             weight={weight}
             hours={hours}
             deleteSubject={deleteSubject}
           />
+
         );
+
       })}
 
     </div>
+
   );
+
 }

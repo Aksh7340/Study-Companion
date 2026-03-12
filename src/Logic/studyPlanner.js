@@ -2,7 +2,9 @@
 // Date Logic
 // ================================
 
-export function remainingDays(date) {
+export function remainingDays(date){
+
+  if(!date) return 0;
 
   const today = new Date();
   today.setHours(0,0,0,0);
@@ -23,17 +25,19 @@ export function remainingDays(date) {
 
 export function getDifficultyWeight(subject){
 
-  if(subject.difficulty === "Easy") return 1;
-  if(subject.difficulty === "Medium") return 2;
+  if(subject?.difficulty === "Easy") return 1;
+  if(subject?.difficulty === "Medium") return 2;
+
   return 3;
 
 }
+
 
 export function calculateSubjectWeight(subject){
 
   const weight = getDifficultyWeight(subject);
 
-  const chapters = subject.chapters || [];
+  const chapters = subject?.chapters || [];
 
   return weight * chapters.length;
 
@@ -46,7 +50,7 @@ export function calculateSubjectWeight(subject){
 
 export function getChapterTestsTaken(chapter){
 
-  const tests = chapter.mockTests || [];
+  const tests = chapter?.mockTests || [];
 
   return tests.length;
 
@@ -55,39 +59,48 @@ export function getChapterTestsTaken(chapter){
 
 export function getChapterAverageScore(chapter){
 
-  const tests = chapter.mockTests || [];
+  const tests = chapter?.mockTests || [];
 
   if(tests.length === 0) return 0;
 
-  const total =
-    tests.reduce((sum,test)=> sum + test.score ,0);
+  const totalScore =
+    tests.reduce((sum,t) => sum + (t.score || 0) ,0);
 
-  return total / tests.length;
+  return totalScore / tests.length;
 
 }
 
 
 export function getChapterBestScore(chapter){
 
-  const tests = chapter.mockTests || [];
+  const tests = chapter?.mockTests || [];
 
   if(tests.length === 0) return null;
 
-  return Math.max(...tests.map(t => t.score));
+  return Math.max(...tests.map(t => t.score || 0));
 
 }
 
 
-// Progress is based on average score
+// Progress based on percentage score
 export function getChapterProgress(chapter){
 
-  const avg = getChapterAverageScore(chapter);
+  const tests = chapter?.mockTests || [];
 
-  if(avg === 0) return 0;
+  if(tests.length === 0) return 0;
 
-  const progress = (avg / 10) * 100;
+  const totalScore =
+    tests.reduce((sum,t) => sum + (t.score || 0),0);
 
-  return Math.round(progress);
+  const totalPossible =
+    tests.reduce((sum,t) => sum + (t.total || 0),0);
+
+  if(totalPossible === 0) return 0;
+
+  const percent =
+    (totalScore / totalPossible) * 100;
+
+  return Math.round(percent);
 
 }
 
@@ -112,7 +125,7 @@ export function getChapterStatus(chapter){
 
 export function getSubjectProgress(subject){
 
-  const chapters = subject.chapters || [];
+  const chapters = subject?.chapters || [];
 
   if(chapters.length === 0) return 0;
 
@@ -134,7 +147,9 @@ export function getSubjectProgress(subject){
 export function getExamProgress(examId, subjects){
 
   const examSubjects =
-    subjects.filter(s => s.examId === examId);
+    subjects.filter(
+      s => String(s.examId) === String(examId)
+    );
 
   if(examSubjects.length === 0) return 0;
 
@@ -156,7 +171,9 @@ export function getExamProgress(examId, subjects){
 export function getTotalWeight(subjects, examId){
 
   return subjects
-    .filter(subject => subject.examId === examId)
+    .filter(
+      subject => String(subject.examId) === String(examId)
+    )
     .reduce(
       (total,subject)=>
         total + calculateSubjectWeight(subject),
@@ -168,10 +185,12 @@ export function getTotalWeight(subjects, examId){
 
 export function distributeDailyHours(subject, subjects, exam){
 
-  const totalWeight =
-    getTotalWeight(subjects, exam.examId);
+  if(!exam) return "0 h 0 min";
 
-  if(totalWeight === 0 || exam.studyHours === 0){
+  const totalWeight =
+    getTotalWeight(subjects, exam._id);
+
+  if(totalWeight === 0 || !exam.studyHours){
     return "0 h 0 min";
   }
 

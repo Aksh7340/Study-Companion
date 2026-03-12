@@ -1,14 +1,33 @@
 import ExamList from "../Components/Exams/ExamList";
 
-export default function Dashboard({ examData,deleteExam,subjects }) {
+export default function Dashboard({
+  examData = [],
+  deleteExam,
+  subjects = []
+}) {
 
   return (
-    <div>
+
+    <div className="dashboard">
 
       <h2>Dashboard</h2>
 
-      <ExamList examData={examData} deleteExam={deleteExam} subjects={subjects} />
+      {examData.length === 0 ? (
+
+        <p>No exams added yet. Go to setup and create one.</p>
+
+      ) : (
+
+        <ExamList
+          examData={examData}
+          deleteExam={deleteExam}
+          subjects={subjects}
+        />
+
+      )}
 
     </div>
+
   );
+
 }

@@ -1,13 +1,50 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function Home() {
 
   const navigate = useNavigate();
 
+  const [token, setToken] = useState(null);
+
+  /* =========================
+     Check Login Status
+  ========================= */
+
+  useEffect(() => {
+
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken) {
+      setToken(storedToken);
+    }
+
+  }, []);
+
+
+  /* =========================
+     Start Button
+  ========================= */
+
+  function handleStart() {
+
+    if (token) {
+      navigate("/dashboard");
+    } else {
+      navigate("/auth");
+    }
+
+  }
+
+
   return (
+
     <div className="home">
 
-      {/* Hero Section */}
+      {/* =========================
+         Hero Section
+      ========================= */}
+
       <section className="hero">
 
         <h1 className="hero-title">
@@ -15,33 +52,39 @@ export default function Home() {
         </h1>
 
         <p className="hero-subtitle">
-          Plan your exams intelligently.  
-          Automatically prioritize subjects and distribute
-          daily study hours for maximum efficiency.
+          Plan your exams intelligently. Automatically
+          prioritize subjects and distribute daily study
+          hours for maximum efficiency.
         </p>
 
         <div className="hero-buttons">
 
           <button
             className="primary-btn"
-            onClick={() => navigate("/setup")}
+            onClick={handleStart}
           >
-            Create Study Plan
+            Start Studying
           </button>
 
-          <button
-            className="secondary-btn"
-            onClick={() => navigate("/dashboard")}
-          >
-            Open Dashboard
-          </button>
+          {!token && (
+
+            <button
+              className="secondary-btn"
+              onClick={() => navigate("/auth")}
+            >
+              Login / Sign Up
+            </button>
+
+          )}
 
         </div>
 
       </section>
 
 
-      {/* Features Section */}
+      {/* =========================
+         Features Section
+      ========================= */}
 
       <section className="features">
 
@@ -70,8 +113,32 @@ export default function Home() {
           <div className="feature-card">
             <h3>Progress Tracking</h3>
             <p>
-              Track subjects and analyze your preparation
-              through dashboards.
+              Track subjects and analyze your
+              preparation through dashboards.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <h3>AI Study Assistant</h3>
+            <p>
+              Ask questions and get AI explanations
+              for difficult concepts.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <h3>AI Mock Tests</h3>
+            <p>
+              Generate chapter-wise mock tests
+              and evaluate your preparation.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <h3>Notes Management</h3>
+            <p>
+              Save important notes and organize
+              them chapter-wise.
             </p>
           </div>
 
@@ -80,5 +147,7 @@ export default function Home() {
       </section>
 
     </div>
+
   );
+
 }

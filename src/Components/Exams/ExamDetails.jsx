@@ -1,44 +1,82 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import SubjectList from "../Subjects/SubjectList";
 import SubjectPieChart from "../Analytics/SubjectPieChart";
 
-export default function ExamDetails({ examData, subjects, updateExam,deleteSubject }) {
+export default function ExamDetails({
+  examData,
+  subjects,
+  updateExam
+}) {
 
   const { examId } = useParams();
   const navigate = useNavigate();
 
-  const exam = examData.find(e => e.examId === examId);
+  const exam = examData.find(e => String(e._id) === String(examId));
 
   const [editing, setEditing] = useState(false);
 
-  const [name, setName] = useState(exam?.examName || "");
-  const [date, setDate] = useState(exam?.date || "");
-  const [hours, setHours] = useState(exam?.studyHours || "");
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [hours, setHours] = useState("");
+
+  useEffect(() => {
+
+    if (exam) {
+
+      setName(exam.examName);
+      setDate(exam.date?.slice(0,10));
+      setHours(exam.studyHours);
+
+    }
+
+  }, [exam]);
 
   if (!exam) return <p>Exam not found</p>;
 
-  function handleSave() {
 
-    updateExam({
-      ...exam,
-      examName: name,
-      date: date,
-      studyHours: Number(hours)
-    });
+  /* =========================
+     Save Exam
+  ========================= */
 
-    setEditing(false);
+  async function handleSave() {
+
+    try {
+
+      const updatedExam = {
+        ...exam,
+        examName: name,
+        date,
+        studyHours: Number(hours)
+      };
+
+      await updateExam(updatedExam);
+
+      setEditing(false);
+
+    } catch (error) {
+
+      console.error("Failed to update exam", error);
+
+    }
+
   }
+
 
   function handleCancel() {
+
     setName(exam.examName);
-    setDate(exam.date);
+    setDate(exam.date?.slice(0,10));
     setHours(exam.studyHours);
+
     setEditing(false);
+
   }
 
+
   return (
+
     <div className="section">
 
       <button
@@ -48,14 +86,20 @@ export default function ExamDetails({ examData, subjects, updateExam,deleteSubje
         Back
       </button>
 
-      {/* VIEW MODE */}
+
       {!editing && (
         <>
           <h2>{exam.examName}</h2>
 
-          <p>Date: {exam.date}</p>
+          <p>
+            Date: {exam.date
+              ? new Date(exam.date).toLocaleDateString("en-GB")
+              : "No date"}
+          </p>
 
-          <p>Daily Study Hours: {exam.studyHours}</p>
+          <p>
+            Daily Study Hours: {exam.studyHours}
+          </p>
 
           <button
             className="button"
@@ -66,7 +110,7 @@ export default function ExamDetails({ examData, subjects, updateExam,deleteSubje
         </>
       )}
 
-      {/* EDIT MODE */}
+
       {editing && (
         <div>
 
@@ -89,7 +133,7 @@ export default function ExamDetails({ examData, subjects, updateExam,deleteSubje
 
           <button
             className="button"
-            style={{margin:"10px"}}
+            style={{ margin: "10px" }}
             onClick={handleSave}
           >
             Save
@@ -106,18 +150,21 @@ export default function ExamDetails({ examData, subjects, updateExam,deleteSubje
       )}
 
       <hr />
+
       <SubjectPieChart
-      subjects={subjects}
-      examId={exam.examId}></SubjectPieChart>
+        subjects={subjects}
+        examId={exam._id}
+      />
 
       <h3>Subjects</h3>
 
       <SubjectList
         subjects={subjects}
         exam={exam}
-        deleteSubject={deleteSubject}
       />
 
     </div>
+
   );
+
 }

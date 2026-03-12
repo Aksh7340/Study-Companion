@@ -1,30 +1,42 @@
 import { remainingDays } from "../../Logic/studyPlanner";
 import ExamCard from "./ExamCard";
 
-export default function ExamList({ examData, onSelectExam , deleteExam ,subjects}) {
+export default function ExamList({ examData = [], deleteExam, subjects }) {
 
-   
+  if (examData.length === 0) {
+    return <p>No exams added yet</p>;
+  }
+
+  /* =========================
+     Sort Exams by Remaining Days
+  ========================= */
+
+  const sortedExams = [...examData].sort((a, b) => {
+
+    const daysA = a?.date ? remainingDays(a.date) : Infinity;
+    const daysB = b?.date ? remainingDays(b.date) : Infinity;
+
+    return daysA - daysB;
+
+  });
+
   return (
-    <>
-    
-      {examData
-        .slice()
-        .sort((a, b) => remainingDays(a.date) - remainingDays(b.date))
-        .map(exam => {
-          const days = remainingDays(exam.date);
 
-          return (
-            <ExamCard
-              key={exam.examId}
-              exam={exam}
-              remainingDays={days}
-              onClick={() => onSelectExam(exam)}
-              deleteExam={deleteExam}
-              subjects={subjects}
-            />
-            
-          );
-        })}
+    <>
+
+      {sortedExams.map(exam => (
+
+        <ExamCard
+          key={exam._id}
+          exam={exam}
+          deleteExam={deleteExam}
+          subjects={subjects}
+        />
+
+      ))}
+
     </>
+
   );
+
 }

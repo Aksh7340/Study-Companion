@@ -1,16 +1,33 @@
-import ExamForm from "../Components/Setup/examForm";
+import ExamForm from "../Components/Setup/ExamForm";
 import SubjectForm from "../Components/Setup/SubjectForm";
 import "./StudySetup.css";
 
-function StudySetup({ examData, setExamData, setSubjects,subjects }) {
+function StudySetup({
+  examData = [],
+  setExamData,
+  subjects = [],
+  setSubjects
+}) {
 
-  
   return (
-    <>
-      <ExamForm setExamData={setExamData} examData={examData}></ExamForm>
-      <SubjectForm examData={examData} setSubjects={setSubjects} subjects={subjects}></SubjectForm>
-    </>
+
+    <div className="setup-container">
+
+      <ExamForm
+        examData={examData}
+        setExamData={setExamData}
+      />
+
+      <SubjectForm
+        examData={examData}
+        subjects={subjects}
+        setSubjects={setSubjects}
+      />
+
+    </div>
+
   );
+
 }
 
 export default StudySetup;

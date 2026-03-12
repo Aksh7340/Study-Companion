@@ -4,19 +4,34 @@ export default function QuestionCard({
   onSelect
 }) {
 
+  if (!question) return null;
+
+  const groupName = `question-${question.id || Math.random()}`;
+
+  const options = question.options || [];
+
   return (
+
     <div className="card">
 
-      <p><strong>{question.question}</strong></p>
+      <p>
+        <strong>{question.question || "Invalid Question"}</strong>
+      </p>
 
-      {question.options.map(opt => (
-        <div key={opt}>
+      {options.length === 0 && (
+        <p>No options available</p>
+      )}
+
+      {options.map((opt, index) => (
+
+        <div key={`${question.id}-${index}`}>
 
           <label>
 
             <input
               type="radio"
-              name={question.id}
+              name={groupName}
+              value={opt}
               checked={selected === opt}
               onChange={() => onSelect(question.id, opt)}
             />
@@ -26,8 +41,11 @@ export default function QuestionCard({
           </label>
 
         </div>
+
       ))}
 
     </div>
+
   );
+
 }

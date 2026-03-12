@@ -13,77 +13,145 @@ import SubjectDetails from "./Components/Subjects/SubjectDetails";
 import ChapterDetails from "./Components/Chapters/ChapterDetails";
 import MockTestPage from "./Components/MockTest/MockTestPage";
 
+import ProtectedRoute from "./utils/ProtectedRoutes";
+
+import api from "./Api/api";
+
 function App() {
 
-  const [examData, setExamData] = useState(() => {
-    const saved = localStorage.getItem("studycompanion_exams");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [examData, setExamData] = useState([]);
+  const [subjects, setSubjects] = useState([]);
 
-  const [subjects, setSubjects] = useState(() => {
-    const saved = localStorage.getItem("studycompanion_subjects");
-    return saved ? JSON.parse(saved) : [];
-  });
+  /* =========================
+     Fetch Data
+  ========================= */
 
   useEffect(() => {
-    localStorage.setItem(
-      "studycompanion_exams",
-      JSON.stringify(examData)
-    );
-  }, [examData]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      "studycompanion_subjects",
-      JSON.stringify(subjects)
-    );
-  }, [subjects]);
+    const token = localStorage.getItem("token");
 
-  function deleteExam(examId) {
-    setExamData(prev =>
-      prev.filter(exam => exam.examId !== examId)
-    );
-  }
+    if (!token) return;
 
-  function deleteSubject(subjectId) {
-    setSubjects(prev =>
-      prev.filter(subject => subject.id !== subjectId)
-    );
-  }
+    async function fetchData() {
+
+      try {
+
+        const exams = await api.get("/exams");
+        const subs = await api.get("/subjects");
+
+        setExamData(exams.data);
+        setSubjects(subs.data);
+
+      } catch (error) {
+
+        console.error(error);
+
+      }
+
+    }
+
+    fetchData();
+
+  }, []);
+
+
+  /* =========================
+     Update Exam
+  ========================= */
 
   function updateExam(updatedExam) {
+
     setExamData(prev =>
       prev.map(exam =>
-        exam.examId === updatedExam.examId
+        String(exam._id) === String(updatedExam._id)
           ? updatedExam
           : exam
       )
     );
+
   }
 
+
+  /* =========================
+     Delete Exam
+  ========================= */
+
+  async function deleteExam(examId) {
+
+    try {
+
+      await api.delete(`/exams/${examId}`);
+
+      setExamData(prev =>
+        prev.filter(exam => String(exam._id) !== String(examId))
+      );
+
+    } catch (error) {
+
+      console.error("Failed to delete exam", error);
+
+    }
+
+  }
+
+
+  /* =========================
+     Update Subject
+  ========================= */
+
   function updateSubject(updatedSubject) {
+
     setSubjects(prev =>
       prev.map(sub =>
-        sub.id === updatedSubject.id
+        String(sub._id) === String(updatedSubject._id)
           ? updatedSubject
           : sub
       )
     );
+
   }
 
-  function updateChapter(subjectId, updatedChapter) {
+
+  /* =========================
+     Delete Subject
+  ========================= */
+
+  async function deleteSubject(subjectId) {
+
+    try {
+
+      await api.delete(`/subjects/${subjectId}`);
+
+      setSubjects(prev =>
+        prev.filter(sub => String(sub._id) !== String(subjectId))
+      );
+
+    } catch (error) {
+
+      console.error("Failed to delete subject", error);
+
+    }
+
+  }
+
+
+  /* =========================
+     Update Chapter
+  ========================= */
+
+  function updateChapter(subjectId, chapterId, updatedChapter) {
 
     setSubjects(prev =>
       prev.map(subject => {
 
-        if (subject.id !== subjectId) {
+        if (String(subject._id) !== String(subjectId)) {
           return subject;
         }
 
         return {
           ...subject,
-          chapters: (subject.chapters || []).map(ch =>
-            ch.id === updatedChapter.id
+          chapters: subject.chapters.map(ch =>
+            String(ch._id) === String(chapterId)
               ? updatedChapter
               : ch
           )
@@ -94,103 +162,113 @@ function App() {
 
   }
 
+
   return (
+
     <div>
 
-      {/* Navigation Bar */}
       <Navbar />
 
-      {/* Main Page Container */}
       <main className="container">
 
         <Routes>
 
-          <Route path="/auth" element={<Auth />} />
-
-          {/* Home */}
           <Route path="/" element={<Home />} />
 
-          {/* Setup */}
+          <Route path="/auth" element={<Auth />} />
+
+
           <Route
             path="/setup"
             element={
-              <StudySetup
-                examData={examData}
-                setExamData={setExamData}
-                subjects={subjects}
-                setSubjects={setSubjects}
-              />
+              <ProtectedRoute>
+                <StudySetup
+                  examData={examData}
+                  setExamData={setExamData}
+                  subjects={subjects}
+                  setSubjects={setSubjects}
+                />
+              </ProtectedRoute>
             }
           />
 
-          {/* Dashboard */}
+
           <Route
             path="/dashboard"
             element={
-              <Dashboard
-                examData={examData}
-                deleteExam={deleteExam}
-                subjects={subjects}
-              />
+              <ProtectedRoute>
+                <Dashboard
+                  examData={examData}
+                  subjects={subjects}
+                  deleteExam={deleteExam}
+                />
+              </ProtectedRoute>
             }
           />
 
-          {/* Exam Details */}
+
           <Route
             path="/dashboard/:examId"
             element={
-              <ExamDetails
-                examData={examData}
-                subjects={subjects}
-                deleteSubject={deleteSubject}
-                updateExam={updateExam}
-              />
+              <ProtectedRoute>
+                <ExamDetails
+                  examData={examData}
+                  subjects={subjects}
+                  updateExam={updateExam}
+                  deleteSubject={deleteSubject}
+                />
+              </ProtectedRoute>
             }
           />
 
-          {/* Subject Details */}
+
           <Route
             path="/dashboard/:examId/:subjectId"
             element={
-              <SubjectDetails
-                subjects={subjects}
-                examData={examData}
-                updateSubject={updateSubject}
-              />
+              <ProtectedRoute>
+                <SubjectDetails
+                  subjects={subjects}
+                  examData={examData}
+                  updateSubject={updateSubject}
+                />
+              </ProtectedRoute>
             }
           />
 
-          {/* Chapter Details */}
+
           <Route
             path="/dashboard/:examId/:subjectId/:chapterId"
             element={
-              <ChapterDetails
-                subjects={subjects}
-                updateSubject={updateSubject}
-              />
+              <ProtectedRoute>
+                <ChapterDetails
+                  subjects={subjects}
+                  updateChapter={updateChapter}
+                />
+              </ProtectedRoute>
             }
           />
 
-          {/* Mock Test */}
+
           <Route
             path="/dashboard/:examId/:subjectId/:chapterId/mock"
             element={
-              <MockTestPage
-                subjects={subjects}
-                updateChapter={updateChapter}
-              />
+              <ProtectedRoute>
+                <MockTestPage
+                  subjects={subjects}
+                  updateChapter={updateChapter}
+                />
+              </ProtectedRoute>
             }
           />
-
-          {/* 404 */}
-          <Route path="*" element={<h2>Page Not Found</h2>} />
 
         </Routes>
 
       </main>
 
     </div>
+
   );
+
 }
 
 export default App;

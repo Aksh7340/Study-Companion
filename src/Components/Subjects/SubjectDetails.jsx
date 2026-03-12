@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   calculateSubjectWeight,
@@ -8,7 +8,6 @@ import {
 
 import ChapterList from "../Chapters/ChapterList";
 import ChapterPerformanceBar from "../Analytics/ChapterPerformanceBar";
-
 
 export default function SubjectDetails({
   subjects,
@@ -19,64 +18,129 @@ export default function SubjectDetails({
   const { examId, subjectId } = useParams();
   const navigate = useNavigate();
 
-  const exam = examData.find(e => e.examId === examId);
-  const subject = subjects.find(s => s.id === subjectId);
+  const exam = examData.find(
+    e => String(e._id) === String(examId)
+  );
+
+  const subject = subjects.find(
+    s => String(s._id) === String(subjectId)
+  );
+
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
 
+
+  /* =========================
+     Sync edit fields
+  ========================= */
+
+  useEffect(() => {
+
+    if (subject) {
+      setName(subject.name || "");
+      setDifficulty(subject.difficulty || "Easy");
+    }
+
+  }, [subject]);
+
+
   if (!exam || !subject) {
     return <p>Data not found</p>;
   }
 
+
   const weight = calculateSubjectWeight(subject);
-  const hours = distributeDailyHours(subject, subjects, exam);
+
+  const hours = distributeDailyHours(
+    subject,
+    subjects,
+    exam
+  );
+
+
+  /* =========================
+     Edit Subject
+  ========================= */
 
   function handleEdit() {
-    setName(subject.name);
-    setDifficulty(subject.difficulty);
     setEditing(true);
   }
 
-  function handleSave() {
-    updateSubject({
-      ...subject,
-      name,
-      difficulty
-    });
 
-    setEditing(false);
+  /* =========================
+     Save Subject
+  ========================= */
+
+  async function handleSave() {
+
+    const updatedSubject = {
+      ...subject,
+      name: name.trim(),
+      difficulty
+    };
+
+    try {
+
+      await updateSubject(updatedSubject);
+
+      setEditing(false);
+
+    } catch (error) {
+
+      console.error("Subject update failed", error);
+
+    }
+
   }
+
 
   function handleCancel() {
+
+    setName(subject.name);
+    setDifficulty(subject.difficulty);
+
     setEditing(false);
+
   }
 
+
   return (
+
     <div className="section">
 
       <button
         className="button"
-        onClick={() => navigate(`/dashboard/${examId}`)}
+        onClick={() =>
+          navigate(`/dashboard/${examId}`)
+        }
       >
         Back
       </button>
+
+
+      {/* =========================
+         VIEW MODE
+      ========================= */}
 
       {!editing && (
         <>
           <h2>{subject.name}</h2>
 
           <p>
-            <strong>Chapters:</strong> {subject.chapters.length}
+            <strong>Chapters:</strong>{" "}
+            {subject.chapters?.length || 0}
           </p>
 
           <p>
-            <strong>Difficulty:</strong> {subject.difficulty}
+            <strong>Difficulty:</strong>{" "}
+            {subject.difficulty}
           </p>
 
           <p>
-            <strong>Daily Study Time:</strong> {hours}
+            <strong>Daily Study Time:</strong>{" "}
+            {hours}
           </p>
 
           <button
@@ -88,17 +152,26 @@ export default function SubjectDetails({
         </>
       )}
 
+
+      {/* =========================
+         EDIT MODE
+      ========================= */}
+
       {editing && (
         <div>
 
           <input
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) =>
+              setName(e.target.value)
+            }
           />
 
           <select
             value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
+            onChange={(e) =>
+              setDifficulty(e.target.value)
+            }
           >
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
@@ -123,18 +196,30 @@ export default function SubjectDetails({
         </div>
       )}
 
-    <hr />
 
-   
+      <hr />
 
 
-<ChapterList
-  subject={subject}
-  updateSubject={updateSubject}
-/>
+      {/* =========================
+         Chapter Section
+      ========================= */}
 
-<ChapterPerformanceBar
-subject={subject}></ChapterPerformanceBar>
+      <ChapterList
+        subject={subject}
+        updateSubject={updateSubject}
+      />
+
+
+      {/* =========================
+         Analytics
+      ========================= */}
+
+      <ChapterPerformanceBar
+        subject={subject}
+      />
+
     </div>
+
   );
+
 }

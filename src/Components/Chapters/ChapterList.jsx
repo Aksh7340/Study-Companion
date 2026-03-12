@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import ChapterCard from "./ChapterCard";
+import api from "../../Api/api";
 
 export default function ChapterList({ subject, updateSubject }) {
 
@@ -8,62 +8,90 @@ export default function ChapterList({ subject, updateSubject }) {
 
   const chapters = subject.chapters || [];
 
-  function addChapter() {
+
+  /* =========================
+     Add Chapter
+  ========================= */
+
+  async function addChapter() {
 
     const name = newChapterName.trim();
-
     if (!name) return;
 
-    const newChapter = {
-      id: uuidv4(),
-      name,
-     
-      mockTests: []
-    };
+    try {
 
-    const updatedChapters = [...chapters, newChapter];
+      const res = await api.post(
+        `/subjects/${subject._id}/chapters`,
+        { name }
+      );
 
-    updateSubject({
-      ...subject,
-      chapters: updatedChapters
-    });
+      const newChapter = res.data;
 
-    setNewChapterName("");
+      updateSubject({
+        ...subject,
+        chapters: [...chapters, newChapter]
+      });
+
+      setNewChapterName("");
+
+    } catch (error) {
+
+      console.error("Error adding chapter:", error);
+
+    }
+
   }
 
-  function deleteChapter(chapterId) {
 
-    const updatedChapters = chapters.filter(
-      ch => ch.id !== chapterId
-    );
+  /* =========================
+     Delete Chapter
+  ========================= */
 
-    updateSubject({
-      ...subject,
-      chapters: updatedChapters
-    });
+  async function deleteChapter(chapterId) {
+
+    try {
+
+      await api.delete(
+        `/subjects/${subject._id}/chapters/${chapterId}`
+      );
+
+      const updatedChapters =
+        chapters.filter(ch => ch._id !== chapterId);
+
+      updateSubject({
+        ...subject,
+        chapters: updatedChapters
+      });
+
+    } catch (error) {
+
+      console.error("Error deleting chapter:", error);
+
+    }
+
   }
-
- 
-
 
 
   return (
+
     <div>
 
       <h3>Chapters</h3>
 
-      {/* Add Chapter */}
       <div style={{ marginBottom: "15px" }}>
 
         <input
           placeholder="New Chapter Name"
           value={newChapterName}
-          onChange={(e) => setNewChapterName(e.target.value)}
+          onChange={(e) =>
+            setNewChapterName(e.target.value)
+          }
         />
 
         <button
           className="button"
           onClick={addChapter}
+          disabled={!newChapterName.trim()}
         >
           Add Chapter
         </button>
@@ -77,17 +105,19 @@ export default function ChapterList({ subject, updateSubject }) {
       <div className="subject-list">
 
         {chapters.map(chapter => (
+
           <ChapterCard
-            key={chapter.id}
+            key={chapter._id}
             chapter={chapter}
             deleteChapter={deleteChapter}
-          
-         
           />
+
         ))}
 
       </div>
 
     </div>
+
   );
+
 }

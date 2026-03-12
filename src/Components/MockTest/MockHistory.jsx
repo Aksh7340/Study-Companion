@@ -1,30 +1,49 @@
 export default function MockHistory({ chapter }) {
 
-  if (!chapter.mockTests.length) {
+  const tests = chapter?.mockTests || [];
+
+  if (tests.length === 0) {
     return <p>No mock tests taken yet</p>;
   }
 
   return (
+
     <div className="section">
 
       <h3>Mock Test History</h3>
 
-      {chapter.mockTests.map(test => (
+      {tests.map((test, index) => {
 
-        <div key={test.id} className="card">
+        const score = test.score ?? "-";
+        const total = test.total ?? "-";
 
-          <p>
-            Score: {test.score} / {test.total}
-          </p>
+        const formattedDate = test.createdAt
+          ? new Date(test.createdAt).toLocaleDateString("en-GB")
+          : "No date";
 
-          <p>
-            Date: {new Date(test.date).toLocaleDateString()}
-          </p>
+        return (
 
-        </div>
+          <div
+            key={test._id || index}
+            className="card"
+          >
 
-      ))}
+            <p>
+              Score: {score} / {total}
+            </p>
+
+            <p>
+              Date: {formattedDate}
+            </p>
+
+          </div>
+
+        );
+
+      })}
 
     </div>
+
   );
+
 }

@@ -1,64 +1,120 @@
 import { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
-
 import { useParams } from "react-router-dom";
+
+import api from "../../Api/api";
+
 import QuestionCard from "./QuestionCard";
 import MockResult from "./MockResult";
 
-export default function MockTestPage({
-  subjects,
-  updateChapter
-}) {
+export default function MockTestPage({ subjects, updateChapter }) {
 
-  const { subjectId, chapterId } = useParams();
+  const { examId, subjectId, chapterId } = useParams();
 
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const subject = subjects.find(s => s.id === subjectId);
-  const chapter = subject?.chapters.find(c => c.id === chapterId);
+  const subject = subjects.find(
+    s => String(s._id) === String(subjectId)
+  );
+
+  const chapter = subject?.chapters?.find(
+    c => String(c._id) === String(chapterId)
+  );
+
+
+  /* =============================
+     Generate AI Mock Questions
+  ============================= */
 
   useEffect(() => {
 
-    // temporary question generator
-    const generated = Array.from({ length: 10 }, (_, i) => ({
-      id: i + 1,
-      question: `Sample Question ${i + 1}`,
-      options: ["A", "B", "C", "D"],
-      correct: "A"
-    }));
+    async function generateMock() {
 
-    setQuestions(generated);
+      try {
 
-  }, []);
+        const token = localStorage.getItem("token");
+
+        const res = await api.post(
+          "/ai/generate-mock",
+          {
+            chapterName: chapter?.name,
+            difficulty: subject?.difficulty
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        setQuestions(res.data.questions);
+
+      } catch (error) {
+
+        console.error("Mock generation failed", error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    }
+
+    if (chapter && subject) {
+      generateMock();
+    }
+
+  }, [chapter, subject]);
+
+
+  /* =============================
+     Select Answer
+  ============================= */
 
   function selectAnswer(questionId, option) {
+
     setAnswers(prev => ({
       ...prev,
       [questionId]: option
     }));
+
   }
+
+
+  /* =============================
+     Stats
+  ============================= */
 
   const totalQuestions = questions.length;
   const attempted = Object.keys(answers).length;
   const unattempted = totalQuestions - attempted;
 
-  function submitTest() {
+
+  /* =============================
+     Submit Test
+  ============================= */
+
+  async function submitTest() {
 
     if (unattempted > 0) {
+
       const confirmSubmit = window.confirm(
         `${unattempted} questions are unattempted. Submit anyway?`
       );
 
       if (!confirmSubmit) return;
+
     }
 
     let correct = 0;
     let wrong = 0;
 
     questions.forEach(q => {
+
       const selected = answers[q.id];
 
       if (!selected) return;
@@ -68,6 +124,7 @@ export default function MockTestPage({
       } else {
         wrong++;
       }
+
     });
 
     const newResult = {
@@ -81,26 +138,87 @@ export default function MockTestPage({
     setResult(newResult);
     setSubmitted(true);
 
-    const newTest = {
-      id: uuidv4(),
-      date: new Date().toISOString(),
-      score: correct,
-      total: totalQuestions
-    };
 
-    const updatedChapter = {
-      ...chapter,
-      mockTests: [...chapter.mockTests, newTest]
-    };
+    /* =============================
+       Save Mock Test
+    ============================= */
 
-    updateChapter(subjectId, updatedChapter);
+    try {
+
+      const token = localStorage.getItem("token");
+
+      const res = await api.post(
+        `/subjects/${subjectId}/chapters/${chapterId}/mocktests`,
+        {
+          score: correct,
+          total: totalQuestions
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const savedTest = res.data;
+
+      /* FIX: append mock test instead of replacing chapter */
+
+      const updatedChapter = {
+        ...chapter,
+        mockTests: [...(chapter.mockTests || []), savedTest]
+      };
+
+      updateChapter(subjectId, chapterId, updatedChapter);
+
+    } catch (error) {
+
+      console.error("Failed to save mock test", error);
+
+    }
+
   }
+
+
+  /* =============================
+     Loading
+  ============================= */
+
+  if (loading) {
+
+    return (
+      <div className="section">
+        <h2>Generating Mock Test...</h2>
+      </div>
+    );
+
+  }
+
+
+  /* =============================
+     Result Page
+  ============================= */
 
   if (submitted) {
-    return <MockResult result={result} />;
+
+    return (
+      <MockResult
+        result={result}
+        examId={examId}
+        subjectId={subjectId}
+        chapterId={chapterId}
+      />
+    );
+
   }
 
+
+  /* =============================
+     Render Questions
+  ============================= */
+
   return (
+
     <div className="section">
 
       <h2>Mock Test</h2>
@@ -114,12 +232,14 @@ export default function MockTestPage({
       </p>
 
       {questions.map(q => (
+
         <QuestionCard
           key={q.id}
           question={q}
           selected={answers[q.id]}
           onSelect={selectAnswer}
         />
+
       ))}
 
       <button
@@ -130,5 +250,7 @@ export default function MockTestPage({
       </button>
 
     </div>
+
   );
+
 }
