@@ -9,6 +9,7 @@ import {
 import ChapterList from "../Chapters/ChapterList";
 import ChapterPerformanceBar from "../Analytics/ChapterPerformanceBar";
 
+
 export default function SubjectDetails({
   subjects,
   examData,
@@ -217,6 +218,8 @@ export default function SubjectDetails({
       <ChapterPerformanceBar
         subject={subject}
       />
+
+   
 
     </div>
 

@@ -15,34 +15,49 @@ export default function ChapterList({ subject, updateSubject }) {
 
   async function addChapter() {
 
-    const name = newChapterName.trim();
-    if (!name) return;
+  const name = newChapterName.trim();
 
-    try {
+  if (!name) return;
 
-      const res = await api.post(
-        `/subjects/${subject._id}/chapters`,
-        { name }
-      );
+  /* =========================
+     Duplicate Check
+  ========================= */
 
-      const newChapter = res.data;
+  const exists = chapters.some(
+    ch => ch.name.toLowerCase() === name.toLowerCase()
+  );
 
-      updateSubject({
-        ...subject,
-        chapters: [...chapters, newChapter]
-      });
+  if (exists) {
 
-      setNewChapterName("");
+    alert("This chapter already exists in the subject.");
 
-    } catch (error) {
-
-      console.error("Error adding chapter:", error);
-
-    }
+    return;
 
   }
 
+  try {
 
+    const res = await api.post(
+      `/subjects/${subject._id}/chapters`,
+      { name }
+    );
+
+    const newChapter = res.data;
+
+    updateSubject({
+      ...subject,
+      chapters: [...chapters, newChapter]
+    });
+
+    setNewChapterName("");
+
+  } catch (error) {
+
+    console.error("Error adding chapter:", error);
+
+  }
+
+}
   /* =========================
      Delete Chapter
   ========================= */

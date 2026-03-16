@@ -4,6 +4,11 @@ import { useState, useEffect } from "react";
 import SubjectList from "../Subjects/SubjectList";
 import SubjectPieChart from "../Analytics/SubjectPieChart";
 
+
+import {
+  getExamProgress
+} from "../../Logic/studyPlanner";
+
 export default function ExamDetails({
   examData,
   subjects,
@@ -14,6 +19,10 @@ export default function ExamDetails({
   const navigate = useNavigate();
 
   const exam = examData.find(e => String(e._id) === String(examId));
+
+  const examSubjects = subjects.filter(
+    s => String(s.examId) === String(examId)
+  );
 
   const [editing, setEditing] = useState(false);
 
@@ -34,6 +43,20 @@ export default function ExamDetails({
   }, [exam]);
 
   if (!exam) return <p>Exam not found</p>;
+
+
+  /* =========================
+     Exam Analytics
+  ========================= */
+
+  const progress = getExamProgress(exam._id, subjects);
+
+  const totalSubjects = examSubjects.length;
+
+  const totalChapters = examSubjects.reduce(
+    (sum,s)=> sum + (s.chapters?.length || 0),
+    0
+  );
 
 
   /* =========================
@@ -63,7 +86,6 @@ export default function ExamDetails({
 
   }
 
-
   function handleCancel() {
 
     setName(exam.examName);
@@ -86,6 +108,10 @@ export default function ExamDetails({
         Back
       </button>
 
+
+      {/* =========================
+          Exam Info
+      ========================= */}
 
       {!editing && (
         <>
@@ -149,12 +175,47 @@ export default function ExamDetails({
         </div>
       )}
 
-      <hr />
+
+    
+
+
+      {/* =========================
+          Quick Stats
+      ========================= */}
+
+      <div className="analytics-grid">
+
+        <div className="card">
+          <h4>Subjects</h4>
+          <p>{totalSubjects}</p>
+        </div>
+
+        <div className="card">
+          <h4>Total Chapters</h4>
+          <p>{totalChapters}</p>
+        </div>
+
+        <div className="card">
+          <h4>Study Hours / Day</h4>
+          <p>{exam.studyHours}</p>
+        </div>
+
+      </div>
+
+
+      {/* =========================
+          Subject Priority Chart
+      ========================= */}
 
       <SubjectPieChart
         subjects={subjects}
         examId={exam._id}
       />
+
+
+      {/* =========================
+          Subjects
+      ========================= */}
 
       <h3>Subjects</h3>
 
@@ -162,6 +223,7 @@ export default function ExamDetails({
         subjects={subjects}
         exam={exam}
       />
+
 
     </div>
 

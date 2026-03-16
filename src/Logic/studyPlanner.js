@@ -163,6 +163,52 @@ export function getExamProgress(examId, subjects){
 
 }
 
+// ================================
+// Exam Status
+// ================================
+
+export function getExamStatus(exam, subjects){
+
+  const progress = getExamProgress(exam._id, subjects);
+
+  const today = new Date();
+  const examDate = new Date(exam.date);
+
+  const diffTime = examDate - today;
+  const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  /* =========================
+     Past Exam
+  ========================= */
+
+  if (examDate < today){
+
+    if(progress >= 90){
+      return "Completed";
+    }
+
+    return "Incomplete";
+  }
+
+  /* =========================
+     Future Exam
+  ========================= */
+
+  if(progress >= 90){
+    return "Ready";
+  }
+
+  if(days <= 7){
+    return "Urgent";
+  }
+
+  if(days <= 20){
+    return "Upcoming";
+  }
+
+  return "In Progress";
+}
+
 
 // ================================
 // Study Planner

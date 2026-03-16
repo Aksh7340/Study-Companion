@@ -1,5 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 
+import MockResultChart from "../Analytics/MockResultChart";
+
 import {
   getChapterAverageScore,
   getChapterBestScore,
@@ -84,6 +86,8 @@ export default function ChapterDetails({
 
     <div className="section">
 
+      {/* Back Button */}
+
       <button
         className="button"
         onClick={goBack}
@@ -92,65 +96,104 @@ export default function ChapterDetails({
       </button>
 
 
-      <h2>{chapter.name}</h2>
+      {/* Title */}
 
-      <p>Status: {status}</p>
+      <h2 style={{ marginTop: "10px" }}>
+        {chapter.name}
+      </h2>
 
-      <p>Tests Taken: {testsTaken}</p>
-
-      <p>Best Score: {bestScore ?? "-"}</p>
-
-      <p>
-        Average Score: {avgScore ? avgScore.toFixed(1) : "0.0"}
-      </p>
+      <p>Status: <strong>{status}</strong></p>
 
 
-      {/* Progress Bar */}
+      {/* =========================
+          Analytics Cards
+      ========================= */}
 
-      <div className="progress-container">
-        <div
-          className="progress-bar"
-          style={{ width: `${progress}%` }}
-        />
+      <div className="analytics-grid">
+
+        <div className="analytics-card">
+          <p className="analytics-title">Tests Taken</p>
+          <h3 className="analytics-value">{testsTaken}</h3>
+        </div>
+
+        <div className="analytics-card">
+          <p className="analytics-title">Best Score</p>
+          <h3 className="analytics-value">
+            {bestScore ?? "-"}
+          </h3>
+        </div>
+
+        <div className="analytics-card">
+          <p className="analytics-title">Average Score</p>
+          <h3 className="analytics-value">
+            {avgScore ? avgScore.toFixed(1) : "0.0"}
+          </h3>
+        </div>
+
+        <div className="analytics-card">
+          <p className="analytics-title">Progress</p>
+          <h3 className="analytics-value">
+            {progress}%
+          </h3>
+        </div>
+
       </div>
 
-      <p>{progress}% Complete</p>
+
+      {/* =========================
+          Chart
+      ========================= */}
+
+      <div className="chart-container">
+
+        <h3>Chapter Performance</h3>
+
+        <MockResultChart chapter={chapter} />
+
+      </div>
 
 
-      <hr />
+      {/* =========================
+          Mock Test Section
+      ========================= */}
+
+      <div className="mock-section">
+
+        <h3>Mock Test</h3>
+
+        <button
+          className="button"
+          onClick={startMock}
+        >
+          Start Mock Test
+        </button>
+
+        <MockHistory chapter={chapter} />
+
+      </div>
 
 
-      <button
-        className="button"
-        onClick={startMock}
-      >
-        Start Mock Test
-      </button>
+      {/* =========================
+          Notes + AI Layout
+      ========================= */}
 
+      <div className="chapter-grid">
 
-      {/* Mock History */}
+        <NotesManager
+          chapter={chapter}
+          subjectId={subjectId}
+          chapterId={chapterId}
+          updateChapter={updateChapter}
+        />
 
-      <MockHistory chapter={chapter} />
+        <AssistantChat
+          chapter={chapter}
+          subjectId={subjectId}
+          chapterId={chapterId}
+          updateChapter={updateChapter}
+        />
 
-
-      {/* Notes */}
-
-      <NotesManager
-        chapter={chapter}
-        subjectId={subjectId}
-        chapterId={chapterId}
-        updateChapter={updateChapter}
-      />
-
-
-      {/* AI Assistant */}
-
-      <AssistantChat
-        chapter={chapter}
-        subjectId={subjectId}
-        chapterId={chapterId}
-        updateChapter={updateChapter}
-      />
+      </div>
 
     </div>
 

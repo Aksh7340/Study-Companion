@@ -16,6 +16,7 @@ import MockTestPage from "./Components/MockTest/MockTestPage";
 import ProtectedRoute from "./utils/ProtectedRoutes";
 
 import api from "./Api/api";
+import "./App.css";
 
 function App() {
 
