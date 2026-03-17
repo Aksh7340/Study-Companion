@@ -6,19 +6,20 @@ const router = express.Router();
 
 
 
+
+
 /* ======================
-   AI Assistant
+   AI STUDY ASSISTANT
 ====================== */
 
 router.post("/assistant", authMiddleware, async (req, res) => {
 
   try {
+    const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY
+});
 
     const { question, chapterName } = req.body;
-
-    const groq = new Groq({
-      apiKey: process.env.GROQ_API_KEY
-    });
 
     const response = await groq.chat.completions.create({
 
@@ -27,12 +28,32 @@ router.post("/assistant", authMiddleware, async (req, res) => {
       messages: [
         {
           role: "system",
-          content:
-            "You are a helpful study assistant that explains academic concepts clearly for students."
+          content: `
+You are an academic study assistant.
+
+Rules:
+- Answer ONLY using concepts related to the given chapter.
+- Use simple student-friendly explanations.
+- Structure answers clearly.
+
+Answer structure:
+1. Short definition
+2. Explanation
+3. Example if helpful
+4. Key takeaway
+
+If the question is unrelated to the chapter, say:
+"This question does not appear related to the chapter."
+`
         },
         {
           role: "user",
-          content: `Chapter: ${chapterName}\nQuestion: ${question}`
+          content: `
+Chapter: ${chapterName}
+
+Student Question:
+${question}
+`
         }
       ]
 
@@ -41,7 +62,6 @@ router.post("/assistant", authMiddleware, async (req, res) => {
     const answer =
       response.choices?.[0]?.message?.content || "No answer generated.";
 
-    // Send structured chat object
     res.json({
       question,
       answer,
@@ -63,22 +83,48 @@ router.post("/assistant", authMiddleware, async (req, res) => {
 
 
 /* ======================
-   Generate Mock Test
+   GENERATE MOCK TEST
 ====================== */
 
 router.post("/generate-mock", authMiddleware, async (req, res) => {
 
   try {
 
+    const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY
+});
+
     const { chapterName, difficulty } = req.body;
 
+    /* ======================
+       Adaptive Difficulty
+    ====================== */
+
+    let adaptiveDifficulty = difficulty || "Medium";
+
+
+    /* ======================
+       Strong Prompt
+    ====================== */
+
     const prompt = `
-Generate 10 multiple choice questions from the chapter "${chapterName}".
-Difficulty level: ${difficulty || "Medium"}.
+Generate EXACTLY 10 UNIQUE multiple choice questions.
 
-Return ONLY valid JSON array.
+Chapter: "${chapterName}"
+Difficulty: ${adaptiveDifficulty}
 
-Example:
+Rules:
+1. Questions must be strictly from the chapter.
+2. Do NOT repeat questions.
+3. Each question must have exactly 4 options.
+4. All options must be UNIQUE.
+5. Only ONE correct answer.
+6. The correct answer must appear inside the options.
+7. Avoid trivial questions.
+
+Return ONLY a JSON array.
+
+Example format:
 
 [
 {
@@ -88,11 +134,10 @@ Example:
 "correct":"Disorder"
 }
 ]
-`;
 
-    const groq = new Groq({
-      apiKey: process.env.GROQ_API_KEY
-    });
+No text before JSON.
+No text after JSON.
+`;
 
     const response = await groq.chat.completions.create({
 
@@ -101,8 +146,7 @@ Example:
       messages: [
         {
           role: "system",
-          content:
-            "Generate academic MCQ questions. Output JSON only. No explanation."
+          content: "Generate academic MCQ questions. Output JSON only."
         },
         {
           role: "user",
@@ -114,13 +158,23 @@ Example:
 
     let raw = response.choices?.[0]?.message?.content || "";
 
-    // Clean markdown blocks
+
+
+    /* ======================
+       Clean AI Response
+    ====================== */
+
     raw = raw
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
-    // Extract JSON array if AI adds text
+
+
+    /* ======================
+       Extract JSON
+    ====================== */
+
     const start = raw.indexOf("[");
     const end = raw.lastIndexOf("]");
 
@@ -130,9 +184,56 @@ Example:
 
     raw = raw.substring(start, end + 1);
 
-    const questions = JSON.parse(raw);
 
-    res.json({ questions });
+
+    /* ======================
+       Parse JSON
+    ====================== */
+
+    let questions = JSON.parse(raw);
+
+
+
+    /* ======================
+       Remove Duplicate Options
+    ====================== */
+
+    questions = questions.map((q, index) => {
+
+      const uniqueOptions = [...new Set(q.options)];
+
+      return {
+        id: index + 1,
+        question: q.question,
+        options: uniqueOptions.slice(0, 4),
+        correct: q.correct
+      };
+
+    });
+
+
+
+    /* ======================
+       Remove Duplicate Questions
+    ====================== */
+
+    const seen = new Set();
+    const uniqueQuestions = [];
+
+    for (const q of questions) {
+
+      if (!seen.has(q.question)) {
+        uniqueQuestions.push(q);
+        seen.add(q.question);
+      }
+
+    }
+
+
+
+    res.json({
+      questions: uniqueQuestions
+    });
 
   } catch (error) {
 

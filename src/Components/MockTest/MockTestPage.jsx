@@ -162,8 +162,6 @@ export default function MockTestPage({ subjects, updateChapter }) {
 
       const savedTest = res.data;
 
-      /* FIX: append mock test instead of replacing chapter */
-
       const updatedChapter = {
         ...chapter,
         mockTests: [...(chapter.mockTests || []), savedTest]
@@ -187,8 +185,15 @@ export default function MockTestPage({ subjects, updateChapter }) {
   if (loading) {
 
     return (
-      <div className="section">
-        <h2>Generating Mock Test...</h2>
+      <div className="flex items-center justify-center h-[300px]">
+        <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+          <h2 className="text-lg font-semibold mb-2">
+            Generating Mock Test
+          </h2>
+          <p className="text-gray-500 text-sm">
+            AI is preparing questions...
+          </p>
+        </div>
       </div>
     );
 
@@ -219,35 +224,74 @@ export default function MockTestPage({ subjects, updateChapter }) {
 
   return (
 
-    <div className="section">
+    <div className="max-w-4xl mx-auto space-y-6">
 
-      <h2>Mock Test</h2>
+      {/* Header */}
 
-      <p>
-        Attempted: {attempted} / {totalQuestions}
-      </p>
+      <div className="bg-white p-6 rounded-xl shadow-sm">
 
-      <p>
-        Remaining: {unattempted}
-      </p>
+        <h2 className="text-xl font-semibold mb-3">
+          Mock Test
+        </h2>
 
-      {questions.map(q => (
+        <div className="flex gap-6 text-sm text-gray-600">
 
-        <QuestionCard
-          key={q.id}
-          question={q}
-          selected={answers[q.id]}
-          onSelect={selectAnswer}
-        />
+          <p>
+            Attempted:
+            <span className="ml-1 font-medium">
+              {attempted}
+            </span>
+          </p>
 
-      ))}
+          <p>
+            Remaining:
+            <span className="ml-1 font-medium">
+              {unattempted}
+            </span>
+          </p>
 
-      <button
-        className="button"
-        onClick={submitTest}
-      >
-        Submit Test
-      </button>
+          <p>
+            Total:
+            <span className="ml-1 font-medium">
+              {totalQuestions}
+            </span>
+          </p>
+
+        </div>
+
+      </div>
+
+
+      {/* Questions */}
+
+      <div className="space-y-4">
+
+        {questions.map(q => (
+
+          <QuestionCard
+            key={q.id}
+            question={q}
+            selected={answers[q.id]}
+            onSelect={selectAnswer}
+          />
+
+        ))}
+
+      </div>
+
+
+      {/* Submit */}
+
+      <div className="flex justify-center">
+
+        <button
+          className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
+          onClick={submitTest}
+        >
+          Submit Test
+        </button>
+
+      </div>
 
     </div>
 

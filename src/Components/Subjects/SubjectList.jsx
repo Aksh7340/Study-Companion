@@ -12,13 +12,14 @@ export default function SubjectList({
 }) {
 
   if (!exam) {
-    return <p>No exam selected</p>;
+    return (
+      <p className="text-gray-500 text-center py-6">
+        No exam selected
+      </p>
+    );
   }
 
-
-  /* =========================
-     Filter Subjects by Exam
-  ========================= */
+  /* Filter Subjects by Exam */
 
   const examSubjects = subjects
     .filter(sub =>
@@ -38,13 +39,17 @@ export default function SubjectList({
 
 
   if (examSubjects.length === 0) {
-    return <p>No subjects added yet</p>;
+    return (
+      <p className="text-gray-500 text-center py-6">
+        No subjects added yet
+      </p>
+    );
   }
 
 
   return (
 
-    <div className="subject-list">
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
       {examSubjects.map(({ subject, weight }) => {
 

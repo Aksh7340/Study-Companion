@@ -9,58 +9,45 @@ export default function ChapterList({ subject, updateSubject }) {
   const chapters = subject.chapters || [];
 
 
-  /* =========================
-     Add Chapter
-  ========================= */
-
   async function addChapter() {
 
-  const name = newChapterName.trim();
+    const name = newChapterName.trim();
 
-  if (!name) return;
+    if (!name) return;
 
-  /* =========================
-     Duplicate Check
-  ========================= */
-
-  const exists = chapters.some(
-    ch => ch.name.toLowerCase() === name.toLowerCase()
-  );
-
-  if (exists) {
-
-    alert("This chapter already exists in the subject.");
-
-    return;
-
-  }
-
-  try {
-
-    const res = await api.post(
-      `/subjects/${subject._id}/chapters`,
-      { name }
+    const exists = chapters.some(
+      ch => ch.name.toLowerCase() === name.toLowerCase()
     );
 
-    const newChapter = res.data;
+    if (exists) {
+      alert("This chapter already exists in the subject.");
+      return;
+    }
 
-    updateSubject({
-      ...subject,
-      chapters: [...chapters, newChapter]
-    });
+    try {
 
-    setNewChapterName("");
+      const res = await api.post(
+        `/subjects/${subject._id}/chapters`,
+        { name }
+      );
 
-  } catch (error) {
+      const newChapter = res.data;
 
-    console.error("Error adding chapter:", error);
+      updateSubject({
+        ...subject,
+        chapters: [...chapters, newChapter]
+      });
+
+      setNewChapterName("");
+
+    } catch (error) {
+
+      console.error("Error adding chapter:", error);
+
+    }
 
   }
 
-}
-  /* =========================
-     Delete Chapter
-  ========================= */
 
   async function deleteChapter(chapterId) {
 
@@ -89,11 +76,15 @@ export default function ChapterList({ subject, updateSubject }) {
 
   return (
 
-    <div>
+    <div className="space-y-6">
 
-      <h3>Chapters</h3>
+  
 
-      <div style={{ marginBottom: "15px" }}>
+
+
+      {/* Add Chapter */}
+
+      <div className="flex gap-3">
 
         <input
           placeholder="New Chapter Name"
@@ -101,23 +92,32 @@ export default function ChapterList({ subject, updateSubject }) {
           onChange={(e) =>
             setNewChapterName(e.target.value)
           }
+          className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
         />
 
         <button
-          className="button"
           onClick={addChapter}
           disabled={!newChapterName.trim()}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
         >
-          Add Chapter
+          Add
         </button>
 
       </div>
 
+
+      {/* Empty State */}
+
       {chapters.length === 0 && (
-        <p>No chapters added yet</p>
+        <p className="text-gray-500 text-sm">
+          No chapters added yet
+        </p>
       )}
 
-      <div className="subject-list">
+
+      {/* Chapter Grid */}
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
         {chapters.map(chapter => (
 

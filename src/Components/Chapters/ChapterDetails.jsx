@@ -23,44 +23,40 @@ export default function ChapterDetails({
   const navigate = useNavigate();
 
 
-  /* =========================
-     Loading Guard
-  ========================= */
-
   if (!subjects || subjects.length === 0) {
-    return <p>Loading chapter...</p>;
+    return (
+      <p className="text-center text-gray-500 mt-10">
+        Loading chapter...
+      </p>
+    );
   }
 
-
-  /* =========================
-     Find Subject
-  ========================= */
 
   const subject = subjects.find(
     s => String(s._id) === String(subjectId)
   );
 
   if (!subject) {
-    return <p>Subject not found</p>;
+    return (
+      <p className="text-center text-gray-500 mt-10">
+        Subject not found
+      </p>
+    );
   }
 
-
-  /* =========================
-     Find Chapter
-  ========================= */
 
   const chapter = subject.chapters?.find(
     ch => String(ch._id) === String(chapterId)
   );
 
   if (!chapter) {
-    return <p>Chapter not found</p>;
+    return (
+      <p className="text-center text-gray-500 mt-10">
+        Chapter not found
+      </p>
+    );
   }
 
-
-  /* =========================
-     Analytics
-  ========================= */
 
   const testsTaken = getChapterTestsTaken(chapter);
   const avgScore = getChapterAverageScore(chapter);
@@ -68,10 +64,6 @@ export default function ChapterDetails({
   const progress = getChapterProgress(chapter);
   const status = getChapterStatus(chapter);
 
-
-  /* =========================
-     Navigation
-  ========================= */
 
   function goBack() {
     navigate(`/dashboard/${examId}/${subjectId}`);
@@ -84,55 +76,59 @@ export default function ChapterDetails({
 
   return (
 
-    <div className="section">
+    <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
-      {/* Back Button */}
+      {/* Back */}
 
       <button
-        className="button"
         onClick={goBack}
+        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
       >
-        Back
+        ← Back
       </button>
 
 
-      {/* Title */}
+      {/* Header */}
 
-      <h2 style={{ marginTop: "10px" }}>
-        {chapter.name}
-      </h2>
+      <div>
 
-      <p>Status: <strong>{status}</strong></p>
+        <h1 className="text-2xl font-bold">
+          {chapter.name}
+        </h1>
+
+        <p className="text-gray-600">
+          Status: <span className="font-semibold">{status}</span>
+        </p>
+
+      </div>
 
 
-      {/* =========================
-          Analytics Cards
-      ========================= */}
+      {/* Stats Cards */}
 
-      <div className="analytics-grid">
+      <div className="grid md:grid-cols-4 gap-6">
 
-        <div className="analytics-card">
-          <p className="analytics-title">Tests Taken</p>
-          <h3 className="analytics-value">{testsTaken}</h3>
+        <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+          <p className="text-gray-500 text-sm">Tests Taken</p>
+          <h3 className="text-2xl font-bold">{testsTaken}</h3>
         </div>
 
-        <div className="analytics-card">
-          <p className="analytics-title">Best Score</p>
-          <h3 className="analytics-value">
+        <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+          <p className="text-gray-500 text-sm">Best Score</p>
+          <h3 className="text-2xl font-bold">
             {bestScore ?? "-"}
           </h3>
         </div>
 
-        <div className="analytics-card">
-          <p className="analytics-title">Average Score</p>
-          <h3 className="analytics-value">
+        <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+          <p className="text-gray-500 text-sm">Average Score</p>
+          <h3 className="text-2xl font-bold">
             {avgScore ? avgScore.toFixed(1) : "0.0"}
           </h3>
         </div>
 
-        <div className="analytics-card">
-          <p className="analytics-title">Progress</p>
-          <h3 className="analytics-value">
+        <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+          <p className="text-gray-500 text-sm">Progress</p>
+          <h3 className="text-2xl font-bold">
             {progress}%
           </h3>
         </div>
@@ -140,58 +136,64 @@ export default function ChapterDetails({
       </div>
 
 
-      {/* =========================
-          Chart
-      ========================= */}
+      {/* Performance Chart */}
 
-      <div className="chart-container">
+      <div className="bg-white p-6 rounded-xl shadow-sm">
 
-        <h3>Chapter Performance</h3>
+        <h2 className="text-xl font-semibold mb-4">
+          Chapter Performance
+        </h2>
 
         <MockResultChart chapter={chapter} />
 
       </div>
 
 
-      {/* =========================
-          Mock Test Section
-      ========================= */}
+      {/* Mock Test Section */}
 
-      <div className="mock-section">
+      <div className="bg-white p-6 rounded-xl shadow-sm space-y-4">
 
-        <h3>Mock Test</h3>
+        <div className="flex justify-between items-center">
 
-        <button
-          className="button"
-          onClick={startMock}
-        >
-          Start Mock Test
-        </button>
+          <h2 className="text-xl font-semibold">
+            Mock Test
+          </h2>
+
+          <button
+            onClick={startMock}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          >
+            Start Mock Test
+          </button>
+
+        </div>
 
         <MockHistory chapter={chapter} />
 
       </div>
 
 
-      {/* =========================
-          Notes + AI Layout
-      ========================= */}
+      {/* Notes + AI */}
 
-      <div className="chapter-grid">
+      <div className="grid md:grid-cols-2 gap-6">
 
-        <NotesManager
-          chapter={chapter}
-          subjectId={subjectId}
-          chapterId={chapterId}
-          updateChapter={updateChapter}
-        />
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <NotesManager
+            chapter={chapter}
+            subjectId={subjectId}
+            chapterId={chapterId}
+            updateChapter={updateChapter}
+          />
+        </div>
 
-        <AssistantChat
-          chapter={chapter}
-          subjectId={subjectId}
-          chapterId={chapterId}
-          updateChapter={updateChapter}
-        />
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <AssistantChat
+            chapter={chapter}
+            subjectId={subjectId}
+            chapterId={chapterId}
+            updateChapter={updateChapter}
+          />
+        </div>
 
       </div>
 

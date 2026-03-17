@@ -54,17 +54,12 @@ export default function AssistantChat({
 
     try {
 
-      /* 1️⃣ Generate AI answer */
-
       const aiRes = await api.post("/ai/assistant", {
         question,
         chapterName: chapter.name
       });
 
       const answer = aiRes.data.answer;
-
-
-      /* 2️⃣ Save chat to database */
 
       const saveRes = await api.post(
         `/subjects/${subjectId}/chapters/${chapterId}/chats`,
@@ -75,9 +70,6 @@ export default function AssistantChat({
       );
 
       const newChat = saveRes.data;
-
-
-      /* 3️⃣ Update React state */
 
       const updatedChapter = {
         ...chapter,
@@ -100,13 +92,31 @@ export default function AssistantChat({
 
   return (
 
-    <div className="section">
+    <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col h-[500px]">
 
-      <h3>AI Assistant</h3>
+      {/* Header */}
 
-      <ChatList chats={chapter.assistantChats || []} />
+      <h3 className="text-lg font-semibold mb-4">
+        AI Assistant
+      </h3>
 
-      <ChatInput askAI={askAI} />
+
+      {/* Chat Messages */}
+
+      <div className="flex-1 overflow-y-auto space-y-3 mb-4">
+
+        <ChatList chats={chapter.assistantChats || []} />
+
+      </div>
+
+
+      {/* Input */}
+
+      <div className="border-t pt-3">
+
+        <ChatInput askAI={askAI} />
+
+      </div>
 
     </div>
 

@@ -38,35 +38,34 @@ export default function ExamCard({
 
   }
 
-  /* =========================
-     Status Color Mapping
-  ========================= */
+  /* Status color classes */
 
-  let statusColor = "#22c55e";
+  let statusColor = "bg-green-500";
 
-  if (status === "Urgent") statusColor = "#ef4444";
-  if (status === "Upcoming") statusColor = "#f59e0b";
-  if (status === "Completed") statusColor = "#16a34a";
-  if (status === "Incomplete") statusColor = "#dc2626";
-  if (status === "In Progress") statusColor = "#3b82f6";
+  if (status === "Urgent") statusColor = "bg-red-500";
+  if (status === "Upcoming") statusColor = "bg-yellow-500";
+  if (status === "Completed") statusColor = "bg-green-600";
+  if (status === "Incomplete") statusColor = "bg-red-600";
+  if (status === "In Progress") statusColor = "bg-blue-500";
 
 
   return (
 
     <div
-      className="exam-card"
       onClick={handleNavigate}
+      className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition cursor-pointer flex flex-col gap-4"
     >
 
       {/* Header */}
 
-      <div className="exam-header">
+      <div className="flex justify-between items-center">
 
-        <h3>{exam.examName}</h3>
+        <h3 className="text-lg font-semibold text-gray-800">
+          {exam.examName}
+        </h3>
 
         <span
-          className="exam-status"
-          style={{ background: statusColor }}
+          className={`text-xs text-white px-3 py-1 rounded-full ${statusColor}`}
         >
           {status}
         </span>
@@ -76,22 +75,21 @@ export default function ExamCard({
 
       {/* Exam Info */}
 
-      <p className="exam-date">
+      <div className="text-sm text-gray-600 space-y-1">
 
-        Date:
-        {exam.date
-          ? new Date(exam.date).toLocaleDateString("en-GB")
-          : " No date"}
+        <p>
+          <span className="font-medium">Date:</span>{" "}
+          {exam.date
+            ? new Date(exam.date).toLocaleDateString("en-GB")
+            : "No date"}
+        </p>
 
-      </p>
+        <p>
+          <span className="font-medium">Days Remaining:</span>{" "}
+          {days !== null ? days : "-"}
+        </p>
 
-
-      <p className="exam-days">
-
-        Days Remaining:
-        {days !== null ? days : "-"}
-
-      </p>
+      </div>
 
 
       {/* Progress */}
@@ -104,11 +102,11 @@ export default function ExamCard({
 
       {/* Footer */}
 
-      <div className="exam-footer">
+      <div className="flex justify-end">
 
         <button
-          className="delete-btn"
           onClick={handleDelete}
+          className="text-sm px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
         >
           Delete
         </button>

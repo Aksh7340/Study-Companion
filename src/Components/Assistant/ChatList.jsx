@@ -3,12 +3,16 @@ import ChatMessage from "./ChatMessage";
 export default function ChatList({ chats = [] }) {
 
   if (chats.length === 0) {
-    return <p>No chats yet</p>;
+    return (
+      <p className="text-sm text-gray-500 text-center">
+        No chats yet
+      </p>
+    );
   }
 
   return (
 
-    <div>
+    <div className="space-y-4">
 
       {chats.map((chat, index) => (
 

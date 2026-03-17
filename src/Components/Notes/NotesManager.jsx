@@ -110,11 +110,21 @@ export default function NotesManager({
 
   return (
 
-    <div className="section">
+    <div className="bg-white p-6 rounded-xl shadow-sm space-y-6">
 
-      <h3>Notes</h3>
+      {/* Header */}
+
+      <h3 className="text-lg font-semibold">
+        Notes
+      </h3>
+
+
+      {/* Editor */}
 
       <NoteEditor addNote={addNote} />
+
+
+      {/* Notes List */}
 
       <NoteList
         notes={chapter.notes || []}

@@ -6,12 +6,16 @@ export default function NoteList({
 }) {
 
   if (!Array.isArray(notes) || notes.length === 0) {
-    return <p>No notes yet</p>;
+    return (
+      <p className="text-sm text-gray-500 text-center">
+        No notes yet
+      </p>
+    );
   }
 
   return (
 
-    <div>
+    <div className="grid md:grid-cols-2 gap-4">
 
       {notes.map((note) => {
 

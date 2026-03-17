@@ -38,37 +38,87 @@ export default function ChapterCard({ chapter, deleteChapter }) {
     }
   }
 
+  /* Status color */
+
+  let statusColor = "bg-blue-500";
+
+  if (status === "Completed") statusColor = "bg-green-500";
+  if (status === "Not Started") statusColor = "bg-gray-400";
+  if (status === "Weak") statusColor = "bg-red-500";
+  if (status === "Average") statusColor = "bg-yellow-500";
+
+
   return (
+
     <div
-      className="card"
       onClick={openChapter}
-      style={{ cursor: "pointer" }}
+      className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition cursor-pointer flex flex-col gap-4"
     >
 
-      <h3>{chapter.name}</h3>
+      {/* Header */}
 
-      <p>Status: {status}</p>
+      <div className="flex justify-between items-center">
 
-      <p>Tests Taken: {testsTaken}</p>
+        <h3 className="text-lg font-semibold text-gray-800">
+          {chapter.name}
+        </h3>
 
-      <p>Best Score: {bestScore ?? "-"}</p>
+        <span
+          className={`text-xs text-white px-3 py-1 rounded-full ${statusColor}`}
+        >
+          {status}
+        </span>
 
-      <p>
-        Average Score: {avgScore ? avgScore.toFixed(1) : "0.0"}
-      </p>
+      </div>
+
+
+      {/* Metrics */}
+
+      <div className="grid grid-cols-2 gap-3 text-sm text-gray-600">
+
+        <div>
+          <p className="text-gray-500">Tests Taken</p>
+          <p className="font-semibold">{testsTaken}</p>
+        </div>
+
+        <div>
+          <p className="text-gray-500">Best Score</p>
+          <p className="font-semibold">{bestScore ?? "-"}</p>
+        </div>
+
+        <div>
+          <p className="text-gray-500">Average</p>
+          <p className="font-semibold">
+            {avgScore ? avgScore.toFixed(1) : "0.0"}
+          </p>
+        </div>
+
+      </div>
+
+
+      {/* Progress */}
 
       <ProgressBar
         progress={progress}
         label="Chapter Progress"
       />
 
-      <button
-        className="button"
-        onClick={handleDelete}
-      >
-        Delete
-      </button>
+
+      {/* Footer */}
+
+      <div className="flex justify-end">
+
+        <button
+          onClick={handleDelete}
+          className="text-sm px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+        >
+          Delete
+        </button>
+
+      </div>
 
     </div>
+
   );
+
 }

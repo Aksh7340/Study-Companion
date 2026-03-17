@@ -1,16 +1,12 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import "../App.css";
 
 export default function Navbar() {
 
   const navigate = useNavigate();
-
   const [token, setToken] = useState(localStorage.getItem("token"));
 
-  /* =========================
-     Listen for login/logout
-  ========================= */
+  /* Listen for login/logout */
 
   useEffect(() => {
 
@@ -27,9 +23,7 @@ export default function Navbar() {
   }, []);
 
 
-  /* =========================
-     Logout
-  ========================= */
+  /* Logout */
 
   function handleLogout() {
 
@@ -42,76 +36,89 @@ export default function Navbar() {
 
   }
 
+  const linkStyle =
+    "px-4 py-2 rounded-lg text-sm font-medium transition duration-200 hover:bg-indigo-100";
+
+  const activeStyle =
+    "px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white";
+
 
   return (
 
-    <nav className="navbar">
+    <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b">
 
-      <div
-        className="nav-left"
-        style={{ cursor: "pointer" }}
-        onClick={() => navigate("/")}
-      >
-        <h2 className="logo">Study Companion</h2>
-      </div>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
+        {/* Logo */}
 
-      <div className="nav-right">
-
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
+        <div
+          className="text-xl font-bold text-indigo-600 cursor-pointer"
+          onClick={() => navigate("/")}
         >
-          Home
-        </NavLink>
+          Study Companion
+        </div>
 
 
-        {token && (
-          <>
-            <NavLink
-              to="/setup"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-            >
-              Setup
-            </NavLink>
+        {/* Navigation */}
 
-            <NavLink
-              to="/dashboard"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-            >
-              Dashboard
-            </NavLink>
-          </>
-        )}
-
-
-        {!token ? (
+        <div className="flex items-center gap-4">
 
           <NavLink
-            to="/auth"
+            to="/"
             className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
+              isActive ? activeStyle : linkStyle
             }
           >
-            Login
+            Home
           </NavLink>
 
-        ) : (
 
-          <button
-            className="logout-btn"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          {token && (
+            <>
+              <NavLink
+                to="/setup"
+                className={({ isActive }) =>
+                  isActive ? activeStyle : linkStyle
+                }
+              >
+                Setup
+              </NavLink>
 
-        )}
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  isActive ? activeStyle : linkStyle
+                }
+              >
+                Dashboard
+              </NavLink>
+            </>
+          )}
+
+
+          {!token ? (
+
+            <NavLink
+              to="/auth"
+              className={({ isActive }) =>
+                isActive ? activeStyle : linkStyle
+              }
+            >
+              Login
+            </NavLink>
+
+          ) : (
+
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition"
+            >
+              Logout
+            </button>
+
+          )}
+
+        </div>
 
       </div>
 

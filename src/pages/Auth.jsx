@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../Api/api";
-import "./Auth.css";
 
 export default function Auth() {
 
@@ -17,11 +16,6 @@ export default function Auth() {
 
   const [loading, setLoading] = useState(false);
 
-
-  /* =========================
-     Redirect if already logged in
-  ========================= */
-
   useEffect(() => {
 
     const token = localStorage.getItem("token");
@@ -32,10 +26,6 @@ export default function Auth() {
 
   }, [navigate]);
 
-
-  /* =========================
-     Validation
-  ========================= */
 
   function validate() {
 
@@ -68,10 +58,6 @@ export default function Auth() {
   }
 
 
-  /* =========================
-     Submit
-  ========================= */
-
   async function handleSubmit() {
 
     if (!validate()) return;
@@ -97,7 +83,6 @@ export default function Auth() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
 
-        // Reload app so App.jsx fetches data
         window.location.href = "/dashboard";
 
       } 
@@ -134,10 +119,6 @@ export default function Auth() {
   }
 
 
-  /* =========================
-     Enter Key Submit
-  ========================= */
-
   function handleKeyDown(e) {
 
     if (e.key === "Enter") {
@@ -150,53 +131,63 @@ export default function Auth() {
 
   return (
 
-    <div className="auth-container">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
 
-      <div className="auth-card">
+      <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-sm">
 
-        <h2>
-          {isLogin ? "Login" : "Sign Up"}
+        <h2 className="text-2xl font-bold text-center mb-6">
+          {isLogin ? "Login" : "Create Account"}
         </h2>
 
-        {!isLogin && (
+        <div className="space-y-4">
 
-          <>
-            <input
-              placeholder="Name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
+          {!isLogin && (
 
-            <input
-              placeholder="Education Level"
-              value={educationLevel}
-              onChange={e => setEducationLevel(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-          </>
+            <>
+              <input
+                placeholder="Name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              />
 
-        )}
+              <input
+                placeholder="Education Level"
+                value={educationLevel}
+                onChange={e => setEducationLevel(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              />
+            </>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
+          )}
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          />
+
+        </div>
+
 
         <button
           onClick={handleSubmit}
           disabled={loading}
+          className="w-full mt-6 bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50"
         >
 
           {loading
@@ -207,9 +198,10 @@ export default function Auth() {
 
         </button>
 
+
         <p
-          className="toggle-auth"
           onClick={() => setIsLogin(!isLogin)}
+          className="text-center text-sm text-indigo-600 mt-6 cursor-pointer hover:underline"
         >
 
           {isLogin

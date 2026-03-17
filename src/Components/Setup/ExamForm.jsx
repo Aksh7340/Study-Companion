@@ -9,11 +9,6 @@ export default function ExamForm({ setExamData, examData }) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-
-  /* =========================
-     Validation
-  ========================= */
-
   function validate() {
 
     const newErrors = {};
@@ -67,10 +62,6 @@ export default function ExamForm({ setExamData, examData }) {
   }
 
 
-  /* =========================
-     Add Exam
-  ========================= */
-
   async function addExam() {
 
     if (!validate()) return;
@@ -111,10 +102,6 @@ export default function ExamForm({ setExamData, examData }) {
   }
 
 
-  /* =========================
-     Enter Key Submit
-  ========================= */
-
   function handleKeyDown(e) {
 
     if (e.key === "Enter") {
@@ -127,49 +114,85 @@ export default function ExamForm({ setExamData, examData }) {
 
   return (
 
-    <div className="exam-container">
+    <div className="space-y-4">
 
-      <h3>Exam Details</h3>
-
-      <input
-        type="text"
-        placeholder="Exam Name"
-        value={examName}
-        onChange={(e) => setExamName(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-
-      {errors.examName && <p className="error">{errors.examName}</p>}
+      <h3 className="text-lg font-semibold">
+        Exam Details
+      </h3>
 
 
-      <input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
+      {/* Exam Name */}
 
-      {errors.date && <p className="error">{errors.date}</p>}
+      <div className="space-y-1">
+
+        <input
+          type="text"
+          placeholder="Exam Name"
+          value={examName}
+          onChange={(e) => setExamName(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+        />
+
+        {errors.examName && (
+          <p className="text-sm text-red-500">
+            {errors.examName}
+          </p>
+        )}
+
+      </div>
 
 
-      <input
-        type="number"
-        min={1}
-        placeholder="Daily Study Hours"
-        value={studyHours}
-        onChange={(e) => setStudyHours(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
+      {/* Exam Date */}
 
-      {errors.studyHours && (
-        <p className="error">{errors.studyHours}</p>
-      )}
+      <div className="space-y-1">
 
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+        />
+
+        {errors.date && (
+          <p className="text-sm text-red-500">
+            {errors.date}
+          </p>
+        )}
+
+      </div>
+
+
+      {/* Study Hours */}
+
+      <div className="space-y-1">
+
+        <input
+          type="number"
+          min={1}
+          placeholder="Daily Study Hours"
+          value={studyHours}
+          onChange={(e) => setStudyHours(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+        />
+
+        {errors.studyHours && (
+          <p className="text-sm text-red-500">
+            {errors.studyHours}
+          </p>
+        )}
+
+      </div>
+
+
+      {/* Submit Button */}
 
       <button
-        className="button"
         onClick={addExam}
         disabled={loading}
+        className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50"
       >
         {loading ? "Adding..." : "Add Exam"}
       </button>

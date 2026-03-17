@@ -13,10 +13,6 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
   const [errors, setErrors] = useState({});
 
 
-  /* =========================
-     Add Chapter (Local)
-  ========================= */
-
   function addChapter() {
 
     const trimmed = chapterName.trim();
@@ -51,10 +47,6 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
   }
 
 
-  /* =========================
-     Validation
-  ========================= */
-
   function validate() {
 
     const newErrors = {};
@@ -88,10 +80,6 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
 
   }
 
-
-  /* =========================
-     Create Subject
-  ========================= */
 
   async function addSubject() {
 
@@ -135,10 +123,6 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
   }
 
 
-  /* =========================
-     Enter Key for Subject
-  ========================= */
-
   function handleKeyDown(e) {
 
     if (e.key === "Enter") {
@@ -151,25 +135,41 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
 
   return (
 
-    <div className="subject-container">
+    <div className="space-y-6">
 
-      <h3>Subject Details</h3>
-
-      <input
-        type="text"
-        placeholder="Subject Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-
-      {errors.name && <p className="error">{errors.name}</p>}
+      <h3 className="text-lg font-semibold">
+        Subject Details
+      </h3>
 
 
+      {/* Subject Name */}
+
+      <div className="space-y-1">
+
+        <input
+          type="text"
+          placeholder="Subject Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+        />
+
+        {errors.name && (
+          <p className="text-sm text-red-500">
+            {errors.name}
+          </p>
+        )}
+
+      </div>
+
+
+      {/* Difficulty */}
 
       <select
         value={difficulty}
         onChange={(e) => setDifficulty(e.target.value)}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500"
       >
         <option value="Easy">Easy</option>
         <option value="Medium">Medium</option>
@@ -177,83 +177,107 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
       </select>
 
 
+      {/* Exam Selection */}
 
-      <select
-        value={selectedExamId}
-        onChange={(e) => setSelectedExamId(e.target.value)}
-        disabled={examData.length === 0}
-      >
+      <div className="space-y-1">
 
-        <option value="" disabled>Select Exam</option>
+        <select
+          value={selectedExamId}
+          onChange={(e) => setSelectedExamId(e.target.value)}
+          disabled={examData.length === 0}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+        >
 
-        {examData.map(exam => (
-          <option key={exam._id} value={exam._id}>
-            {exam.examName}
-          </option>
-        ))}
+          <option value="" disabled>Select Exam</option>
 
-      </select>
+          {examData.map(exam => (
+            <option key={exam._id} value={exam._id}>
+              {exam.examName}
+            </option>
+          ))}
 
-      {errors.selectedExamId && (
-        <p className="error">{errors.selectedExamId}</p>
-      )}
+        </select>
 
-
-
-      <hr />
-
-
-      <h4>Add Chapters</h4>
-
-      <input
-        type="text"
-        placeholder="Chapter name"
-        value={chapterName}
-        onChange={(e) => setChapterName(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") addChapter();
-        }}
-      />
-
-      <button
-        className="button"
-        onClick={addChapter}
-      >
-        Add Chapter
-      </button>
-
-      {errors.chapters && (
-        <p className="error">{errors.chapters}</p>
-      )}
-
-
-
-      <div>
-
-        {chapters.map((ch, index) => (
-
-          <div key={ch.name} className="card">
-
-            {ch.name}
-
-            <button
-              className="button"
-              onClick={() => removeChapter(index)}
-            >
-              Remove
-            </button>
-
-          </div>
-
-        ))}
+        {errors.selectedExamId && (
+          <p className="text-sm text-red-500">
+            {errors.selectedExamId}
+          </p>
+        )}
 
       </div>
 
 
+      {/* Chapters Section */}
+
+      <div className="space-y-3">
+
+        <h4 className="font-medium text-gray-700">
+          Add Chapters
+        </h4>
+
+        <div className="flex gap-2">
+
+          <input
+            type="text"
+            placeholder="Chapter name"
+            value={chapterName}
+            onChange={(e) => setChapterName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") addChapter();
+            }}
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+          />
+
+          <button
+            onClick={addChapter}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          >
+            Add
+          </button>
+
+        </div>
+
+        {errors.chapters && (
+          <p className="text-sm text-red-500">
+            {errors.chapters}
+          </p>
+        )}
+
+
+        {/* Chapter List */}
+
+        <div className="space-y-2">
+
+          {chapters.map((ch, index) => (
+
+            <div
+              key={ch.name}
+              className="flex justify-between items-center bg-gray-50 px-4 py-2 rounded-lg"
+            >
+
+              <span>{ch.name}</span>
+
+              <button
+                onClick={() => removeChapter(index)}
+                className="text-sm px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </div>
+
+
+      {/* Submit Button */}
 
       <button
-        className="button"
         onClick={addSubject}
+        className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition"
       >
         Add Subject
       </button>

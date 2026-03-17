@@ -45,7 +45,7 @@ export default function NoteEditor({ addNote }) {
 
   return (
 
-    <div>
+    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-3">
 
       <textarea
         placeholder="Write chapter notes..."
@@ -53,15 +53,20 @@ export default function NoteEditor({ addNote }) {
         onChange={(e) => setText(e.target.value)}
         onKeyDown={handleKeyDown}
         rows={4}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 resize-none focus:ring-2 focus:ring-indigo-500 focus:outline-none"
       />
 
-      <button
-        className="button"
-        onClick={handleAdd}
-        disabled={!text.trim()}
-      >
-        Add Note
-      </button>
+      <div className="flex justify-end">
+
+        <button
+          onClick={handleAdd}
+          disabled={!text.trim()}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+        >
+          Add Note
+        </button>
+
+      </div>
 
     </div>
 

@@ -3,44 +3,55 @@ export default function MockHistory({ chapter }) {
   const tests = chapter?.mockTests || [];
 
   if (tests.length === 0) {
-    return <p>No mock tests taken yet</p>;
+    return (
+      <p className="text-sm text-gray-500">
+        No mock tests taken yet
+      </p>
+    );
   }
 
   return (
 
-    <div className="section">
+    <div className="space-y-4">
 
-      <h3>Mock Test History</h3>
+      <h3 className="text-lg font-semibold">
+        Mock Test History
+      </h3>
 
-      {tests.map((test, index) => {
+      <div className="space-y-3">
 
-        const score = test.score ?? "-";
-        const total = test.total ?? "-";
+        {tests.map((test, index) => {
 
-        const formattedDate = test.createdAt
-          ? new Date(test.createdAt).toLocaleDateString("en-GB")
-          : "No date";
+          const score = test.score ?? "-";
+          const total = test.total ?? "-";
 
-        return (
+          const formattedDate = test.createdAt
+            ? new Date(test.createdAt).toLocaleDateString("en-GB")
+            : "No date";
 
-          <div
-            key={test._id || index}
-            className="card"
-          >
+          return (
 
-            <p>
-              Score: {score} / {total}
-            </p>
+            <div
+              key={test._id || index}
+              className="flex justify-between items-center bg-gray-50 px-4 py-3 rounded-lg"
+            >
 
-            <p>
-              Date: {formattedDate}
-            </p>
+              <div className="text-sm text-gray-600">
+                <p className="font-medium">
+                  Score: {score} / {total}
+                </p>
+                <p className="text-gray-500">
+                  {formattedDate}
+                </p>
+              </div>
 
-          </div>
+            </div>
 
-        );
+          );
 
-      })}
+        })}
+
+      </div>
 
     </div>
 

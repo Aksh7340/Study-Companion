@@ -4,24 +4,17 @@ export default function ExamHeader({ exam }) {
 
   if (!exam) return null;
 
-
-  /* =========================
-     Format Date
-  ========================= */
+  /* Format Date */
 
   const formattedDate = exam.date
     ? new Date(exam.date).toLocaleDateString("en-GB")
     : "No date";
 
-
-  /* =========================
-     Days Remaining
-  ========================= */
+  /* Days Remaining */
 
   const daysRemaining = exam.date
     ? remainingDays(exam.date)
     : "-";
-
 
   const studyHours =
     exam.studyHours !== undefined && exam.studyHours !== null
@@ -31,29 +24,36 @@ export default function ExamHeader({ exam }) {
 
   return (
 
-    <div
-      style={{
-        border: "1px solid #ddd",
-        padding: "20px",
-        borderRadius: "10px",
-        marginBottom: "20px",
-        background: "#f8f8f8"
-      }}
-    >
+    <div className="bg-white p-6 rounded-xl shadow-sm">
 
-      <h2>{exam.examName}</h2>
+      <h1 className="text-2xl font-bold mb-4">
+        {exam.examName}
+      </h1>
 
-      <p>
-        <strong>Exam Date:</strong> {formattedDate}
-      </p>
+      <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
 
-      <p>
-        <strong>Days Remaining:</strong> {daysRemaining}
-      </p>
+        <div>
+          <p className="text-gray-500">Exam Date</p>
+          <p className="font-semibold text-gray-800">
+            {formattedDate}
+          </p>
+        </div>
 
-      <p>
-        <strong>Daily Study Hours:</strong> {studyHours}
-      </p>
+        <div>
+          <p className="text-gray-500">Days Remaining</p>
+          <p className="font-semibold text-gray-800">
+            {daysRemaining}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-gray-500">Study Hours / Day</p>
+          <p className="font-semibold text-gray-800">
+            {studyHours}
+          </p>
+        </div>
+
+      </div>
 
     </div>
 

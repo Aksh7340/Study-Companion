@@ -16,16 +16,11 @@ import MockTestPage from "./Components/MockTest/MockTestPage";
 import ProtectedRoute from "./utils/ProtectedRoutes";
 
 import api from "./Api/api";
-import "./App.css";
 
 function App() {
 
   const [examData, setExamData] = useState([]);
   const [subjects, setSubjects] = useState([]);
-
-  /* =========================
-     Fetch Data
-  ========================= */
 
   useEffect(() => {
 
@@ -55,11 +50,6 @@ function App() {
 
   }, []);
 
-
-  /* =========================
-     Update Exam
-  ========================= */
-
   function updateExam(updatedExam) {
 
     setExamData(prev =>
@@ -71,11 +61,6 @@ function App() {
     );
 
   }
-
-
-  /* =========================
-     Delete Exam
-  ========================= */
 
   async function deleteExam(examId) {
 
@@ -95,11 +80,6 @@ function App() {
 
   }
 
-
-  /* =========================
-     Update Subject
-  ========================= */
-
   function updateSubject(updatedSubject) {
 
     setSubjects(prev =>
@@ -111,11 +91,6 @@ function App() {
     );
 
   }
-
-
-  /* =========================
-     Delete Subject
-  ========================= */
 
   async function deleteSubject(subjectId) {
 
@@ -134,11 +109,6 @@ function App() {
     }
 
   }
-
-
-  /* =========================
-     Update Chapter
-  ========================= */
 
   function updateChapter(subjectId, chapterId, updatedChapter) {
 
@@ -163,21 +133,21 @@ function App() {
 
   }
 
-
   return (
 
-    <div>
+    <div className="min-h-screen bg-gray-100">
 
+      {/* Top Navigation */}
       <Navbar />
 
-      <main className="container">
+      {/* Main Page Container */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <Routes>
 
           <Route path="/" element={<Home />} />
 
           <Route path="/auth" element={<Auth />} />
-
 
           <Route
             path="/setup"
@@ -193,7 +163,6 @@ function App() {
             }
           />
 
-
           <Route
             path="/dashboard"
             element={
@@ -206,7 +175,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
 
           <Route
             path="/dashboard/:examId"
@@ -222,7 +190,6 @@ function App() {
             }
           />
 
-
           <Route
             path="/dashboard/:examId/:subjectId"
             element={
@@ -236,7 +203,6 @@ function App() {
             }
           />
 
-
           <Route
             path="/dashboard/:examId/:subjectId/:chapterId"
             element={
@@ -248,7 +214,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
 
           <Route
             path="/dashboard/:examId/:subjectId/:chapterId/mock"

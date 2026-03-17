@@ -29,18 +29,31 @@ export default function NoteCard({
 
   return (
 
-    <div className="card">
+    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-3">
 
-      <p>{content}</p>
+      {/* Note Content */}
 
-      <small>{date}</small>
+      <p className="text-gray-800 text-sm leading-relaxed">
+        {content}
+      </p>
 
-      <button
-        className="button"
-        onClick={handleDelete}
-      >
-        Delete
-      </button>
+
+      {/* Footer */}
+
+      <div className="flex justify-between items-center">
+
+        <small className="text-gray-400 text-xs">
+          {date}
+        </small>
+
+        <button
+          onClick={handleDelete}
+          className="text-xs px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+        >
+          Delete
+        </button>
+
+      </div>
 
     </div>
 

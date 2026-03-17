@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import SubjectList from "../Subjects/SubjectList";
 import SubjectPieChart from "../Analytics/SubjectPieChart";
 
-
 import {
   getExamProgress
 } from "../../Logic/studyPlanner";
@@ -33,21 +32,15 @@ export default function ExamDetails({
   useEffect(() => {
 
     if (exam) {
-
       setName(exam.examName);
       setDate(exam.date?.slice(0,10));
       setHours(exam.studyHours);
-
     }
 
   }, [exam]);
 
-  if (!exam) return <p>Exam not found</p>;
+  if (!exam) return <p className="text-center mt-10">Exam not found</p>;
 
-
-  /* =========================
-     Exam Analytics
-  ========================= */
 
   const progress = getExamProgress(exam._id, subjects);
 
@@ -58,10 +51,6 @@ export default function ExamDetails({
     0
   );
 
-
-  /* =========================
-     Save Exam
-  ========================= */
 
   async function handleSave() {
 
@@ -99,131 +88,149 @@ export default function ExamDetails({
 
   return (
 
-    <div className="section">
+    <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
+
+      {/* Back Button */}
 
       <button
-        className="button"
         onClick={() => navigate("/dashboard")}
+        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
       >
-        Back
+        ← Back
       </button>
 
 
-      {/* =========================
-          Exam Info
-      ========================= */}
+      {/* Exam Info */}
 
-      {!editing && (
-        <>
-          <h2>{exam.examName}</h2>
+      <div className="bg-white p-6 rounded-xl shadow-sm">
 
-          <p>
-            Date: {exam.date
-              ? new Date(exam.date).toLocaleDateString("en-GB")
-              : "No date"}
-          </p>
+        {!editing && (
+          <>
+            <h1 className="text-2xl font-bold mb-2">
+              {exam.examName}
+            </h1>
 
-          <p>
-            Daily Study Hours: {exam.studyHours}
-          </p>
+            <p className="text-gray-600">
+              Date: {exam.date
+                ? new Date(exam.date).toLocaleDateString("en-GB")
+                : "No date"}
+            </p>
 
-          <button
-            className="button"
-            onClick={() => setEditing(true)}
-          >
-            Edit Exam
-          </button>
-        </>
-      )}
+            <p className="text-gray-600">
+              Daily Study Hours: {exam.studyHours}
+            </p>
+
+            <button
+              onClick={() => setEditing(true)}
+              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+            >
+              Edit Exam
+            </button>
+          </>
+        )}
 
 
-      {editing && (
-        <div>
+        {editing && (
 
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <div className="space-y-3">
 
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            />
 
-          <input
-            type="number"
-            value={hours}
-            onChange={(e) => setHours(e.target.value)}
-          />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            />
 
-          <button
-            className="button"
-            style={{ margin: "10px" }}
-            onClick={handleSave}
-          >
-            Save
-          </button>
+            <input
+              type="number"
+              value={hours}
+              onChange={(e) => setHours(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            />
 
-          <button
-            className="button"
-            onClick={handleCancel}
-          >
-            Cancel
-          </button>
+            <div className="flex gap-3 pt-2">
 
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+              >
+                Save
+              </button>
+
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+
+            </div>
+
+          </div>
+
+        )}
+
+      </div>
+
+
+      {/* Quick Stats */}
+
+      <div className="grid md:grid-cols-3 gap-6">
+
+        <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+          <p className="text-gray-500 text-sm">Subjects</p>
+          <h3 className="text-2xl font-bold">{totalSubjects}</h3>
         </div>
-      )}
 
-
-    
-
-
-      {/* =========================
-          Quick Stats
-      ========================= */}
-
-      <div className="analytics-grid">
-
-        <div className="card">
-          <h4>Subjects</h4>
-          <p>{totalSubjects}</p>
+        <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+          <p className="text-gray-500 text-sm">Total Chapters</p>
+          <h3 className="text-2xl font-bold">{totalChapters}</h3>
         </div>
 
-        <div className="card">
-          <h4>Total Chapters</h4>
-          <p>{totalChapters}</p>
-        </div>
-
-        <div className="card">
-          <h4>Study Hours / Day</h4>
-          <p>{exam.studyHours}</p>
+        <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+          <p className="text-gray-500 text-sm">Study Hours / Day</p>
+          <h3 className="text-2xl font-bold">{exam.studyHours}</h3>
         </div>
 
       </div>
 
 
-      {/* =========================
-          Subject Priority Chart
-      ========================= */}
+      {/* Subject Chart */}
 
-      <SubjectPieChart
-        subjects={subjects}
-        examId={exam._id}
-      />
+      <div className="bg-white p-6 rounded-xl shadow-sm">
+
+        <h2 className="text-xl font-semibold mb-4">
+          Subject Distribution
+        </h2>
+
+        <SubjectPieChart
+          subjects={subjects}
+          examId={exam._id}
+        />
+
+      </div>
 
 
-      {/* =========================
+      {/* Subjects */}
+
+      <div>
+
+        <h2 className="text-xl font-semibold mb-4">
           Subjects
-      ========================= */}
+        </h2>
 
-      <h3>Subjects</h3>
+        <SubjectList
+          subjects={subjects}
+          exam={exam}
+        />
 
-      <SubjectList
-        subjects={subjects}
-        exam={exam}
-      />
-
+      </div>
 
     </div>
 

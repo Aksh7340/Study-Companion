@@ -4,12 +4,7 @@ import { useState, useEffect } from "react";
 export default function Home() {
 
   const navigate = useNavigate();
-
   const [token, setToken] = useState(null);
-
-  /* =========================
-     Check Login Status
-  ========================= */
 
   useEffect(() => {
 
@@ -21,11 +16,6 @@ export default function Home() {
 
   }, []);
 
-
-  /* =========================
-     Start Button
-  ========================= */
-
   function handleStart() {
 
     if (token) {
@@ -36,32 +26,28 @@ export default function Home() {
 
   }
 
-
   return (
 
-    <div className="home">
+    <div className="min-h-screen bg-gray-50">
 
-      {/* =========================
-         Hero Section
-      ========================= */}
+      {/* Hero Section */}
 
-      <section className="hero">
+      <section className="text-center py-24 px-6">
 
-        <h1 className="hero-title">
+        <h1 className="text-5xl font-bold text-indigo-600 mb-6">
           Study Companion
         </h1>
 
-        <p className="hero-subtitle">
-          Plan your exams intelligently. Automatically
-          prioritize subjects and distribute daily study
-          hours for maximum efficiency.
+        <p className="max-w-2xl mx-auto text-lg text-gray-600 mb-10">
+          Plan your exams intelligently. Automatically prioritize
+          subjects and distribute daily study hours for maximum efficiency.
         </p>
 
-        <div className="hero-buttons">
+        <div className="flex justify-center gap-4">
 
           <button
-            className="primary-btn"
             onClick={handleStart}
+            className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
           >
             Start Studying
           </button>
@@ -69,8 +55,8 @@ export default function Home() {
           {!token && (
 
             <button
-              className="secondary-btn"
               onClick={() => navigate("/auth")}
+              className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-100 transition"
             >
               Login / Sign Up
             </button>
@@ -82,63 +68,55 @@ export default function Home() {
       </section>
 
 
-      {/* =========================
-         Features Section
-      ========================= */}
+      {/* Features Section */}
 
-      <section className="features">
+      <section className="max-w-6xl mx-auto px-6 pb-24">
 
-        <h2 className="features-title">
+        <h2 className="text-3xl font-bold text-center mb-12">
           Why Use Study Companion?
         </h2>
 
-        <div className="features-grid">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-          <div className="feature-card">
-            <h3>Smart Planning</h3>
-            <p>
-              Automatically calculate subject priorities
-              based on difficulty and chapters.
+          <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition">
+            <h3 className="text-lg font-semibold mb-2">Smart Planning</h3>
+            <p className="text-gray-600">
+              Automatically calculate subject priorities based on difficulty and chapters.
             </p>
           </div>
 
-          <div className="feature-card">
-            <h3>Daily Study Distribution</h3>
-            <p>
-              Evenly distribute your study hours to
-              maximize productivity.
+          <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition">
+            <h3 className="text-lg font-semibold mb-2">Daily Study Distribution</h3>
+            <p className="text-gray-600">
+              Evenly distribute your study hours to maximize productivity.
             </p>
           </div>
 
-          <div className="feature-card">
-            <h3>Progress Tracking</h3>
-            <p>
-              Track subjects and analyze your
-              preparation through dashboards.
+          <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition">
+            <h3 className="text-lg font-semibold mb-2">Progress Tracking</h3>
+            <p className="text-gray-600">
+              Track subjects and analyze your preparation through dashboards.
             </p>
           </div>
 
-          <div className="feature-card">
-            <h3>AI Study Assistant</h3>
-            <p>
-              Ask questions and get AI explanations
-              for difficult concepts.
+          <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition">
+            <h3 className="text-lg font-semibold mb-2">AI Study Assistant</h3>
+            <p className="text-gray-600">
+              Ask questions and get AI explanations for difficult concepts.
             </p>
           </div>
 
-          <div className="feature-card">
-            <h3>AI Mock Tests</h3>
-            <p>
-              Generate chapter-wise mock tests
-              and evaluate your preparation.
+          <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition">
+            <h3 className="text-lg font-semibold mb-2">AI Mock Tests</h3>
+            <p className="text-gray-600">
+              Generate chapter-wise mock tests and evaluate your preparation.
             </p>
           </div>
 
-          <div className="feature-card">
-            <h3>Notes Management</h3>
-            <p>
-              Save important notes and organize
-              them chapter-wise.
+          <div className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition">
+            <h3 className="text-lg font-semibold mb-2">Notes Management</h3>
+            <p className="text-gray-600">
+              Save important notes and organize them chapter-wise.
             </p>
           </div>
 

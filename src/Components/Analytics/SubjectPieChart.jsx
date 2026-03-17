@@ -32,44 +32,51 @@ export default function SubjectPieChart({ subjects, examId }) {
   ];
 
   return (
-    <div style={{ width: "100%", height: 350 }}>
 
-      <h3 style={{ textAlign: "center" }}>
+    <div className="bg-white p-6 rounded-xl shadow-sm space-y-4">
+
+      <h3 className="text-lg font-semibold text-center">
         Subject Weight Distribution
       </h3>
 
-      <ResponsiveContainer>
+      <div className="w-full h-[350px]">
 
-        <PieChart>
+        <ResponsiveContainer>
 
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            outerRadius={120}
-            dataKey="value"
-            label={({ name, percent }) =>
-              `${name} ${(percent * 100).toFixed(0)}%`
-            }
-          >
+          <PieChart>
 
-            {data.map((entry, index) => (
-              <Cell
-                key={index}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              outerRadius={120}
+              dataKey="value"
+              label={({ name, percent }) =>
+                `${name} ${(percent * 100).toFixed(0)}%`
+              }
+            >
 
-          </Pie>
+              {data.map((entry, index) => (
+                <Cell
+                  key={index}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
 
-          <Tooltip />
+            </Pie>
 
-          <Legend />
+            <Tooltip />
 
-        </PieChart>
+            <Legend />
 
-      </ResponsiveContainer>
+          </PieChart>
+
+        </ResponsiveContainer>
+
+      </div>
 
     </div>
+
   );
+
 }
