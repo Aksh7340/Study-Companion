@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api"
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 });
 
 api.interceptors.request.use((config) => {
@@ -15,5 +15,23 @@ api.interceptors.request.use((config) => {
   return config;
 
 });
+
+// ================================
+// Response Interceptor for Errors
+// ================================
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle specific error codes
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      window.location.href = "/auth";
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

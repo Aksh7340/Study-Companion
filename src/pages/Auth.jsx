@@ -15,6 +15,8 @@ export default function Auth() {
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
 
@@ -29,25 +31,54 @@ export default function Auth() {
 
   function validate() {
 
+    setError("");
+
+    // ✅ IMPROVED: Better email validation
     if (!email.trim()) {
-      alert("Email is required");
+      setError("Email is required");
       return false;
     }
 
+    // ✅ FIXED: Better email regex that validates domain properly
+    // Checks: valid-chars@valid-domain.valid-extension
+    const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address (e.g., user@example.com)");
+      return false;
+    }
+
+    // ✅ Check for consecutive dots
+    if (email.includes("..")) {
+      setError("Email cannot contain consecutive dots");
+      return false;
+    }
+
+    // ✅ Better password validation
     if (!password.trim()) {
-      alert("Password is required");
+      setError("Password is required");
+      return false;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
       return false;
     }
 
     if (!isLogin) {
 
       if (!name.trim()) {
-        alert("Name is required");
+        setError("Name is required");
+        return false;
+      }
+
+      if (name.length < 2) {
+        setError("Name must be at least 2 characters");
         return false;
       }
 
       if (!educationLevel.trim()) {
-        alert("Education level is required");
+        setError("Education level is required");
         return false;
       }
 
@@ -65,6 +96,7 @@ export default function Auth() {
     try {
 
       setLoading(true);
+      setError("");
 
       const endpoint = isLogin
         ? "/auth/login"
@@ -83,19 +115,24 @@ export default function Auth() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
 
-        window.location.href = "/dashboard";
+        setSuccess("Login successful!");
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 500);
 
       } 
       else {
 
-        alert("Registration successful");
+        setSuccess("Registration successful! Redirecting to login...");
 
-        setIsLogin(true);
-
-        setName("");
-        setEducationLevel("");
-        setEmail("");
-        setPassword("");
+        setTimeout(() => {
+          setIsLogin(true);
+          setName("");
+          setEducationLevel("");
+          setEmail("");
+          setPassword("");
+          setSuccess("");
+        }, 1000);
 
       }
 
@@ -104,10 +141,11 @@ export default function Auth() {
 
       const message =
         error?.response?.data?.message ||
-        error.message ||
-        "Authentication failed";
+        error?.message ||
+        "Something went wrong. Please try again.";
 
-      alert(message);
+      setError(message);
+      console.error("Auth error:", error);
 
     }
     finally {
@@ -139,10 +177,23 @@ export default function Auth() {
           {isLogin ? "Login" : "Create Account"}
         </h2>
 
+        {/* Error Message Display */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700 text-sm">{error}</p>
+          </div>
+        )}
+
+        {/* Success Message Display */}
+        {success && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-700 text-sm">{success}</p>
+          </div>
+        )}
+
         <div className="space-y-4">
 
           {!isLogin && (
-
             <>
               <input
                 placeholder="Name"
@@ -160,7 +211,6 @@ export default function Auth() {
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               />
             </>
-
           )}
 
           <input
@@ -183,7 +233,6 @@ export default function Auth() {
 
         </div>
 
-
         <button
           onClick={handleSubmit}
           disabled={loading}
@@ -198,9 +247,12 @@ export default function Auth() {
 
         </button>
 
-
         <p
-          onClick={() => setIsLogin(!isLogin)}
+          onClick={() => {
+            setIsLogin(!isLogin);
+            setError("");
+            setSuccess("");
+          }}
           className="text-center text-sm text-indigo-600 mt-6 cursor-pointer hover:underline"
         >
 

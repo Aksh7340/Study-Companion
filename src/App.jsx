@@ -21,27 +21,50 @@ function App() {
 
   const [examData, setExamData] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  
+  // ✅ NEW: Loading and error states
+  const [loading, setLoading] = useState(true);
+  const [dataError, setDataError] = useState("");
 
   useEffect(() => {
 
     const token = localStorage.getItem("token");
 
-    if (!token) return;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
     async function fetchData() {
 
       try {
 
-        const exams = await api.get("/exams");
-        const subs = await api.get("/subjects");
+        setLoading(true);
+        setDataError("");
 
-        setExamData(exams.data);
-        setSubjects(subs.data);
+        // ✅ IMPROVED: Better error handling with Promise.all
+        const [examsRes, subsRes] = await Promise.all([
+          api.get("/exams"),
+          api.get("/subjects")
+        ]);
+
+        setExamData(examsRes.data);
+        setSubjects(subsRes.data);
 
       } catch (error) {
 
-        console.error(error);
+        // ✅ IMPROVED: Better error message
+        const errorMsg = 
+          error?.response?.data?.message ||
+          error?.message ||
+          "Failed to load data. Please refresh the page.";
+        
+        setDataError(errorMsg);
+        console.error("Data fetch error:", error);
 
+      }
+      finally {
+        setLoading(false);
       }
 
     }
@@ -74,7 +97,10 @@ function App() {
 
     } catch (error) {
 
-      console.error("Failed to delete exam", error);
+      // ✅ IMPROVED: Better error handling
+      const errorMsg = error?.response?.data?.message || "Failed to delete exam";
+      setDataError(errorMsg);
+      console.error("Delete exam error:", error);
 
     }
 
@@ -104,7 +130,9 @@ function App() {
 
     } catch (error) {
 
-      console.error("Failed to delete subject", error);
+      const errorMsg = error?.response?.data?.message || "Failed to delete subject";
+      setDataError(errorMsg);
+      console.error("Delete subject error:", error);
 
     }
 
@@ -140,6 +168,21 @@ function App() {
       {/* Top Navigation */}
       <Navbar />
 
+      {/* ✅ NEW: Global Error Display */}
+      {dataError && (
+        <div className="bg-red-50 border-b-2 border-red-200 p-4 max-w-7xl mx-auto">
+          <div className="flex justify-between items-center">
+            <p className="text-red-700">{dataError}</p>
+            <button 
+              onClick={() => setDataError("")}
+              className="text-red-600 hover:text-red-800 font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Page Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
@@ -171,6 +214,8 @@ function App() {
                   examData={examData}
                   subjects={subjects}
                   deleteExam={deleteExam}
+                  loading={loading}
+                  error={dataError}
                 />
               </ProtectedRoute>
             }
