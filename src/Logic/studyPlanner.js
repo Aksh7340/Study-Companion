@@ -257,3 +257,33 @@ export function distributeDailyHours(subject, subjects, exam){
   return `${hours} h ${minutes} min`;
 
 }
+
+/**
+ * =========================================
+ * DAYS REMAINING CALCULATOR
+ * =========================================
+ * Normalizes dates to midnight to accurately compare them.
+ * Returns an object with the display text and tailwind color.
+ */
+export function getDaysLeftInfo(examDateString) {
+  if (!examDateString) return { text: "No Date", color: "text-slate-400" };
+
+  // Set exam date to midnight
+  const examDate = new Date(examDateString);
+  examDate.setHours(0, 0, 0, 0);
+
+  // Set today to midnight
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const isPast = examDate < today;
+
+  if (isPast) {
+    return { text: "Overdue", color: "text-red-500 font-bold" };
+  } else if (examDate.getTime() === today.getTime()) {
+    return { text: "Today!", color: "text-emerald-500 font-bold" };
+  } else {
+    const daysLeft = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+    return { text: `${daysLeft} days left`, color: "text-indigo-600" };
+  }
+}

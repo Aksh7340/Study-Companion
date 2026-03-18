@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import {
   getExamProgress,
-  remainingDays,
+  getDaysLeftInfo,
   getExamStatus
 } from "../../Logic/studyPlanner";
 import ProgressBar from "../UI/ProgressBar";
@@ -19,7 +19,7 @@ export default function ExamCard({ exam, deleteExam, subjects }) {
 
   const navigate  = useNavigate();
   const progress  = getExamProgress(exam._id, subjects);
-  const days      = exam.date ? remainingDays(exam.date) : null;
+  const daysInfo  = getDaysLeftInfo(exam.date);
   const status    = getExamStatus(exam, subjects);
 
   const cfg = statusConfig[status] ?? statusConfig["In Progress"];
@@ -61,13 +61,13 @@ export default function ExamCard({ exam, deleteExam, subjects }) {
           <div className="bg-slate-50 rounded-xl px-3 py-2">
             <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">Date</p>
             <p className="font-semibold text-slate-700">
-              {exam.date ? new Date(exam.date).toLocaleDateString("en-GB") : "—"}
+               {exam.date ? new Date(exam.date).toLocaleDateString("en-GB") : "—"}
             </p>
           </div>
           <div className="bg-slate-50 rounded-xl px-3 py-2">
             <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">Days Left</p>
-            <p className={`font-semibold ${days !== null && days <= 7 ? "text-red-600" : "text-slate-700"}`}>
-              {days === null ? "—" : days > 0 ? days : days === 0 ? "Today" : "Overdue"}
+            <p className={`font-semibold ${daysInfo.color}`}>
+              {daysInfo.text}
             </p>
           </div>
         </div>
