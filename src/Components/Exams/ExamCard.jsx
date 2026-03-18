@@ -4,117 +4,90 @@ import {
   remainingDays,
   getExamStatus
 } from "../../Logic/studyPlanner";
-
 import ProgressBar from "../UI/ProgressBar";
 
-export default function ExamCard({
-  exam,
-  deleteExam,
-  subjects
-}) {
+const statusConfig = {
+  "Completed":   { color: "bg-emerald-100 text-emerald-700",  accent: "#22c55e",  dot: "bg-emerald-500" },
+  "Ready":       { color: "bg-cyan-100 text-cyan-700",        accent: "#06b6d4",  dot: "bg-cyan-500" },
+  "In Progress": { color: "bg-blue-100 text-blue-700",        accent: "#6366f1",  dot: "bg-blue-500" },
+  "Upcoming":    { color: "bg-amber-100 text-amber-700",      accent: "#f59e0b",  dot: "bg-amber-500" },
+  "Urgent":      { color: "bg-red-100 text-red-700",          accent: "#ef4444",  dot: "bg-red-500" },
+  "Incomplete":  { color: "bg-rose-100 text-rose-700",        accent: "#f43f5e",  dot: "bg-rose-500" },
+};
 
-  const navigate = useNavigate();
+export default function ExamCard({ exam, deleteExam, subjects }) {
 
-  const progress = getExamProgress(exam._id, subjects);
-  const days = exam.date ? remainingDays(exam.date) : null;
+  const navigate  = useNavigate();
+  const progress  = getExamProgress(exam._id, subjects);
+  const days      = exam.date ? remainingDays(exam.date) : null;
+  const status    = getExamStatus(exam, subjects);
 
-  const status = getExamStatus(exam, subjects);
+  const cfg = statusConfig[status] ?? statusConfig["In Progress"];
 
-  function handleNavigate() {
-    navigate(`/dashboard/${exam._id}`);
-  }
+  function handleNavigate() { navigate(`/dashboard/${exam._id}`); }
 
   function handleDelete(e) {
-
     e.stopPropagation();
-
-    const confirmDelete = window.confirm(
-      `Delete exam "${exam.examName}"?`
-    );
-
-    if (confirmDelete) {
-      deleteExam(exam._id);
-    }
-
+    if (window.confirm(`Delete exam "${exam.examName}"?`)) deleteExam(exam._id);
   }
 
-  /* Status color classes */
-
-  let statusColor = "bg-green-500";
-
-  if (status === "Urgent") statusColor = "bg-red-500";
-  if (status === "Upcoming") statusColor = "bg-yellow-500";
-  if (status === "Completed") statusColor = "bg-green-600";
-  if (status === "Incomplete") statusColor = "bg-red-600";
-  if (status === "In Progress") statusColor = "bg-blue-500";
-
-
   return (
-
     <div
       onClick={handleNavigate}
-      className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition cursor-pointer flex flex-col gap-4"
+      className="relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300
+        cursor-pointer group overflow-hidden border border-slate-100 hover:-translate-y-1 animate-fade-in"
     >
-
-      {/* Header */}
-
-      <div className="flex justify-between items-center">
-
-        <h3 className="text-lg font-semibold text-gray-800">
-          {exam.examName}
-        </h3>
-
-        <span
-          className={`text-xs text-white px-3 py-1 rounded-full ${statusColor}`}
-        >
-          {status}
-        </span>
-
-      </div>
-
-
-      {/* Exam Info */}
-
-      <div className="text-sm text-gray-600 space-y-1">
-
-        <p>
-          <span className="font-medium">Date:</span>{" "}
-          {exam.date
-            ? new Date(exam.date).toLocaleDateString("en-GB")
-            : "No date"}
-        </p>
-
-        <p>
-          <span className="font-medium">Days Remaining:</span>{" "}
-          {days !== null ? days : "-"}
-        </p>
-
-      </div>
-
-
-      {/* Progress */}
-
-      <ProgressBar
-        progress={progress}
-        label="Exam Progress"
+      {/* Left accent bar */}
+      <div
+        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl transition-all duration-300 group-hover:w-1.5"
+        style={{ background: cfg.accent }}
       />
 
+      <div className="pl-5 pr-5 pt-5 pb-4 flex flex-col gap-4">
 
-      {/* Footer */}
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-base font-bold text-slate-800 leading-snug group-hover:text-indigo-700 transition-colors">
+            {exam.examName}
+          </h3>
+          <span className={`flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${cfg.color}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+            {status}
+          </span>
+        </div>
 
-      <div className="flex justify-end">
+        {/* Info */}
+        <div className="grid grid-cols-2 gap-2 text-xs text-slate-500">
+          <div className="bg-slate-50 rounded-xl px-3 py-2">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">Date</p>
+            <p className="font-semibold text-slate-700">
+              {exam.date ? new Date(exam.date).toLocaleDateString("en-GB") : "—"}
+            </p>
+          </div>
+          <div className="bg-slate-50 rounded-xl px-3 py-2">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">Days Left</p>
+            <p className={`font-semibold ${days !== null && days <= 7 ? "text-red-600" : "text-slate-700"}`}>
+              {days === null ? "—" : days > 0 ? days : days === 0 ? "Today" : "Overdue"}
+            </p>
+          </div>
+        </div>
 
-        <button
-          onClick={handleDelete}
-          className="text-sm px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-        >
-          Delete
-        </button>
+        {/* Progress */}
+        <ProgressBar progress={progress} label="Exam Progress" />
+
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-1">
+          <span className="text-xs text-slate-400 font-medium">{progress}% complete</span>
+          <button
+            onClick={handleDelete}
+            className="text-xs px-3 py-1.5 rounded-lg bg-red-50 text-red-500 font-semibold
+              hover:bg-red-500 hover:text-white transition-all duration-200"
+          >
+            Delete
+          </button>
+        </div>
 
       </div>
-
     </div>
-
   );
-
 }

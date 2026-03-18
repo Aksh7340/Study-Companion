@@ -1,5 +1,6 @@
 import { getSubjectProgress } from "../../Logic/studyPlanner";
 import { useNavigate } from "react-router-dom";
+import ProgressBar from "../UI/ProgressBar";
 
 export default function WeakSubjects({ subjects, examId }) {
 
@@ -13,56 +14,44 @@ export default function WeakSubjects({ subjects, examId }) {
     subject => getSubjectProgress(subject) < 50
   );
 
-  if (weakSubjects.length === 0) {
-
-    return (
-      <div className="bg-white p-6 rounded-xl shadow-sm">
-
-        <h3 className="text-lg font-semibold mb-2">
-          Weak Subjects
-        </h3>
-
-        <p className="text-sm text-gray-500">
-          No weak subjects 🎉
-        </p>
-
-      </div>
-    );
-
-  }
-
   return (
+    <div className="h-full">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="w-1 h-5 rounded-full bg-amber-500 inline-block" />
+        <h3 className="text-base font-bold text-slate-700">Weak Subjects</h3>
+      </div>
 
-    <div className="bg-white p-6 rounded-xl shadow-sm space-y-4">
-
-      <h3 className="text-lg font-semibold">
-        Weak Subjects
-      </h3>
-
-      {weakSubjects.map(subject => (
-
-        <div
-          key={subject._id}
-          onClick={() =>
-            navigate(`/dashboard/${examId}/${subject._id}`)
-          }
-          className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition"
-        >
-
-          <p className="font-medium text-gray-800">
-            {subject.name}
-          </p>
-
-          <p className="text-sm text-gray-500">
-            Progress: {getSubjectProgress(subject)}%
-          </p>
-
+      {weakSubjects.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <p className="text-3xl mb-2">🎉</p>
+          <p className="text-sm font-semibold text-slate-600">No weak subjects!</p>
+          <p className="text-xs text-slate-400 mt-1">All subjects are above 50% progress.</p>
         </div>
-
-      ))}
-
+      ) : (
+        <div className="space-y-3">
+          {weakSubjects.map(subject => {
+            const prog = getSubjectProgress(subject);
+            return (
+              <div
+                key={subject._id}
+                onClick={() => navigate(`/dashboard/${examId}/${subject._id}`)}
+                className="border border-slate-100 rounded-xl p-3 hover:border-indigo-200
+                  hover:bg-indigo-50/50 cursor-pointer transition-all duration-200 group"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <p className="text-sm font-semibold text-slate-700 group-hover:text-indigo-700 transition-colors">
+                    {subject.name}
+                  </p>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">
+                    {prog}%
+                  </span>
+                </div>
+                <ProgressBar progress={prog} />
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
-
   );
-
 }

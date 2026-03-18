@@ -137,7 +137,7 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
 
     <div className="space-y-6">
 
-      <h3 className="text-lg font-semibold">
+      <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
         Subject Details
       </h3>
 
@@ -152,7 +152,7 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          className="input-field"
         />
 
         {errors.name && (
@@ -169,7 +169,7 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
       <select
         value={difficulty}
         onChange={(e) => setDifficulty(e.target.value)}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+        className="input-field"
       >
         <option value="Easy">Easy</option>
         <option value="Medium">Medium</option>
@@ -185,7 +185,7 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
           value={selectedExamId}
           onChange={(e) => setSelectedExamId(e.target.value)}
           disabled={examData.length === 0}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+          className="input-field disabled:opacity-50 disabled:cursor-not-allowed"
         >
 
           <option value="" disabled>Select Exam</option>
@@ -211,7 +211,7 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
 
       <div className="space-y-3">
 
-        <h4 className="font-medium text-gray-700">
+        <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">
           Add Chapters
         </h4>
 
@@ -225,12 +225,12 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
             onKeyDown={(e) => {
               if (e.key === "Enter") addChapter();
             }}
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+            className="input-field flex-1"
           />
 
           <button
             onClick={addChapter}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+            className="btn-primary px-4 py-2"
           >
             Add
           </button>
@@ -252,14 +252,14 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
 
             <div
               key={ch.name}
-              className="flex justify-between items-center bg-gray-50 px-4 py-2 rounded-lg"
+              className="flex justify-between items-center bg-slate-50 border border-slate-100 px-4 py-2.5 rounded-xl"
             >
 
               <span>{ch.name}</span>
 
               <button
                 onClick={() => removeChapter(index)}
-                className="text-sm px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                className="text-xs px-3 py-1 rounded-lg bg-red-50 text-red-500 font-semibold hover:bg-red-500 hover:text-white transition-all"
               >
                 Remove
               </button>
@@ -277,7 +277,7 @@ export default function SubjectForm({ examData, subjects, setSubjects }) {
 
       <button
         onClick={addSubject}
-        className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition"
+        className="btn-primary w-full py-3"
       >
         Add Subject
       </button>

@@ -131,7 +131,7 @@ export default function ExamForm({ setExamData, examData }) {
           value={examName}
           onChange={(e) => setExamName(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          className="input-field"
         />
 
         {errors.examName && (
@@ -152,7 +152,7 @@ export default function ExamForm({ setExamData, examData }) {
           value={date}
           onChange={(e) => setDate(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          className="input-field"
         />
 
         {errors.date && (
@@ -175,7 +175,7 @@ export default function ExamForm({ setExamData, examData }) {
           value={studyHours}
           onChange={(e) => setStudyHours(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          className="input-field"
         />
 
         {errors.studyHours && (
@@ -192,7 +192,7 @@ export default function ExamForm({ setExamData, examData }) {
       <button
         onClick={addExam}
         disabled={loading}
-        className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50"
+        className="btn-primary w-full py-3 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? "Adding..." : "Add Exam"}
       </button>

@@ -6,266 +6,192 @@ export default function Auth() {
 
   const navigate = useNavigate();
 
-  const [isLogin, setIsLogin] = useState(true);
-
-  const [name, setName] = useState("");
+  const [isLogin, setIsLogin]         = useState(true);
+  const [name, setName]               = useState("");
   const [educationLevel, setEducationLevel] = useState("");
+  const [email, setEmail]             = useState("");
+  const [password, setPassword]       = useState("");
+  const [showPass, setShowPass]       = useState(false);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
+  const [success, setSuccess]   = useState("");
 
   useEffect(() => {
-
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      navigate("/dashboard");
-    }
-
+    if (localStorage.getItem("token")) navigate("/dashboard");
   }, [navigate]);
 
-
   function validate() {
-
     setError("");
 
-    // ✅ IMPROVED: Better email validation
-    if (!email.trim()) {
-      setError("Email is required");
-      return false;
-    }
+    if (!email.trim()) { setError("Email is required"); return false; }
 
-    // ✅ FIXED: Better email regex that validates domain properly
-    // Checks: valid-chars@valid-domain.valid-extension
     const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address (e.g., user@example.com)");
-      return false;
-    }
-
-    // ✅ Check for consecutive dots
-    if (email.includes("..")) {
-      setError("Email cannot contain consecutive dots");
-      return false;
-    }
-
-    // ✅ Better password validation
-    if (!password.trim()) {
-      setError("Password is required");
-      return false;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return false;
-    }
+    if (!emailRegex.test(email)) { setError("Please enter a valid email address"); return false; }
+    if (email.includes(".."))   { setError("Email cannot contain consecutive dots"); return false; }
+    if (!password.trim())       { setError("Password is required"); return false; }
+    if (password.length < 6)    { setError("Password must be at least 6 characters"); return false; }
 
     if (!isLogin) {
-
-      if (!name.trim()) {
-        setError("Name is required");
-        return false;
-      }
-
-      if (name.length < 2) {
-        setError("Name must be at least 2 characters");
-        return false;
-      }
-
-      if (!educationLevel.trim()) {
-        setError("Education level is required");
-        return false;
-      }
-
+      if (!name.trim())            { setError("Name is required"); return false; }
+      if (name.length < 2)         { setError("Name must be at least 2 characters"); return false; }
+      if (!educationLevel.trim())  { setError("Education level is required"); return false; }
     }
 
     return true;
-
   }
 
-
   async function handleSubmit() {
-
     if (!validate()) return;
 
     try {
-
       setLoading(true);
       setError("");
 
-      const endpoint = isLogin
-        ? "/auth/login"
-        : "/auth/register";
-
-      const payload = isLogin
+      const endpoint = isLogin ? "/auth/login" : "/auth/register";
+      const payload  = isLogin
         ? { email, password }
         : { name, email, password, educationLevel };
 
-      const res = await api.post(endpoint, payload);
-
+      const res  = await api.post(endpoint, payload);
       const data = res.data;
 
       if (isLogin) {
-
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token",  data.token);
         localStorage.setItem("userId", data.userId);
-
         setSuccess("Login successful!");
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 500);
-
-      } 
-      else {
-
-        setSuccess("Registration successful! Redirecting to login...");
-
+        setTimeout(() => { window.location.href = "/dashboard"; }, 500);
+      } else {
+        setSuccess("Account created! Redirecting to login…");
         setTimeout(() => {
           setIsLogin(true);
-          setName("");
-          setEducationLevel("");
-          setEmail("");
-          setPassword("");
-          setSuccess("");
+          setName(""); setEducationLevel(""); setEmail(""); setPassword(""); setSuccess("");
         }, 1000);
-
       }
-
-    }
-    catch (error) {
-
-      const message =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong. Please try again.";
-
-      setError(message);
-      console.error("Auth error:", error);
-
-    }
-    finally {
-
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-
     }
-
   }
-
 
   function handleKeyDown(e) {
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSubmit();
-    }
-
+    if (e.key === "Enter") { e.preventDefault(); handleSubmit(); }
   }
 
+  /* Shared input style */
+  const inp = "input-field";
 
   return (
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
 
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+      {/* Gradient background */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0"
+          style={{ background: "linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #fdf4ff 100%)" }} />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-300 rounded-full blur-3xl opacity-20" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl opacity-20" />
+      </div>
 
-      <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-sm">
+      <div className="w-full max-w-md animate-slide-up">
 
-        <h2 className="text-2xl font-bold text-center mb-6">
-          {isLogin ? "Login" : "Create Account"}
-        </h2>
+        {/* Card */}
+        <div className="glass rounded-2xl shadow-xl p-8">
 
-        {/* Error Message Display */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-700 text-sm">{error}</p>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <span className="text-white font-extrabold text-xl">SC</span>
+            </div>
+            <h2 className="text-2xl font-bold text-slate-800">
+              {isLogin ? "Welcome back 👋" : "Create your account"}
+            </h2>
+            <p className="text-slate-500 text-sm mt-1">
+              {isLogin ? "Sign in to continue your preparation." : "Start your smart study journey today."}
+            </p>
           </div>
-        )}
 
-        {/* Success Message Display */}
-        {success && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-green-700 text-sm">{success}</p>
-          </div>
-        )}
-
-        <div className="space-y-4">
-
-          {!isLogin && (
-            <>
-              <input
-                placeholder="Name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              />
-
-              <input
-                placeholder="Education Level"
-                value={educationLevel}
-                onChange={e => setEducationLevel(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              />
-            </>
+          {/* Alerts */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2 animate-fade-in">
+              <span className="text-red-500 mt-0.5">⚠️</span>
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start gap-2 animate-fade-in">
+              <span className="text-emerald-500 mt-0.5">✅</span>
+              <p className="text-emerald-700 text-sm">{success}</p>
+            </div>
           )}
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-          />
+          {/* Fields */}
+          <div className="space-y-3">
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-          />
+            {!isLogin && (
+              <>
+                <div>
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Full Name</label>
+                  <input className={inp} placeholder="e.g. Akshay Gurjar"
+                    value={name} onChange={e => setName(e.target.value)} onKeyDown={handleKeyDown} />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Education Level</label>
+                  <input className={inp} placeholder="e.g. Undergraduate / Class 12"
+                    value={educationLevel} onChange={e => setEducationLevel(e.target.value)} onKeyDown={handleKeyDown} />
+                </div>
+              </>
+            )}
+
+            <div>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Email</label>
+              <input type="email" className={inp} placeholder="you@example.com"
+                value={email} onChange={e => setEmail(e.target.value)} onKeyDown={handleKeyDown} />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Password</label>
+              <div className="relative">
+                <input type={showPass ? "text" : "password"} className={`${inp} pr-10`}
+                  placeholder="Minimum 6 characters"
+                  value={password} onChange={e => setPassword(e.target.value)} onKeyDown={handleKeyDown} />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(p => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition text-sm"
+                >
+                  {showPass ? "🙈" : "👁️"}
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Submit */}
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="btn-primary w-full mt-6 py-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading
+              ? <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Processing…
+                </span>
+              : isLogin ? "Sign In" : "Create Account"}
+          </button>
+
+          {/* Toggle */}
+          <p
+            onClick={() => { setIsLogin(l => !l); setError(""); setSuccess(""); }}
+            className="text-center text-sm text-indigo-600 mt-5 cursor-pointer hover:text-indigo-800 font-medium transition-colors"
+          >
+            {isLogin ? "New here? Create an account →" : "Already have an account? Sign in →"}
+          </p>
 
         </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="w-full mt-6 bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50"
-        >
-
-          {loading
-            ? "Processing..."
-            : isLogin
-              ? "Login"
-              : "Sign Up"}
-
-        </button>
-
-        <p
-          onClick={() => {
-            setIsLogin(!isLogin);
-            setError("");
-            setSuccess("");
-          }}
-          className="text-center text-sm text-indigo-600 mt-6 cursor-pointer hover:underline"
-        >
-
-          {isLogin
-            ? "New user? Sign up"
-            : "Already have an account? Login"}
-
-        </p>
-
       </div>
-
     </div>
-
   );
-
 }
