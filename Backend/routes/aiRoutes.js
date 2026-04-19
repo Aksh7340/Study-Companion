@@ -45,7 +45,7 @@ router.post("/assistant", authMiddleware, async (req, res) => {
         ? subjectName.trim()
         : "the current subject";
 
-    const cleanChapter  = chapterName.trim();
+    const cleanChapter = chapterName.trim();
     const cleanQuestion = question.trim();
 
     const groq = new Groq({ apiKey: API_KEY });
@@ -97,10 +97,9 @@ TONE: Be clear, encouraging, and student-friendly. Do not be robotic. Do not rep
     //    chapter-specific one. Now the question is passed as-is.
 
     const response = await groq.chat.completions.create({
-      model: "moonshotai/kimi-k2-instruct-0905",
+      model: "llama3-70b-8192",
 
-      // temperature 0.3 — low for focused, on-topic academic answers
-      // kimi-k2 recommended temp is 0.6 but 0.3 is better for strict scope adherence
+      // BUG FIX: temperature 0.7 → 0.3
       // Lower temperature = more focused, factual, on-topic responses.
       // Higher temperature causes the model to "wander" into unrelated areas.
       temperature: 0.3,
@@ -230,10 +229,9 @@ Output ONLY this JSON format:
 ]`;
 
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "llama-3.1-8b-instant",
 
-      // temperature 0.4 — slightly higher for diverse MCQ generation
-      // llama3 excels at structured JSON output and instruction following
+      // BUG FIX: temperature 0.8 → 0.4
       // Lower temperature produces more reliable JSON structure and more
       // on-topic questions. 0.8 was causing JSON format errors and off-topic drift.
       temperature: 0.4,
@@ -242,7 +240,7 @@ Output ONLY this JSON format:
 
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user",   content: userPrompt   }
+        { role: "user", content: userPrompt }
       ]
     });
 
@@ -253,7 +251,7 @@ Output ONLY this JSON format:
     raw = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
 
     const start = raw.indexOf("[");
-    const end   = raw.lastIndexOf("]");
+    const end = raw.lastIndexOf("]");
 
     if (start === -1 || end === -1) {
       throw new Error("AI response did not contain a valid JSON array. Please try again.");
@@ -279,7 +277,7 @@ Output ONLY this JSON format:
     }
 
     // ── Sanitize and validate each question ───────────────────────────────────
-    const seen   = new Set();
+    const seen = new Set();
     const result = [];
 
     for (let i = 0; i < questions.length; i++) {
@@ -290,7 +288,7 @@ Output ONLY this JSON format:
         continue;
       }
 
-      const questionText      = String(q.question).trim();
+      const questionText = String(q.question).trim();
       const correctNormalized = String(q.correct).trim();
       const optionsNormalized = q.options.map(o => String(o).trim());
 
@@ -309,10 +307,10 @@ Output ONLY this JSON format:
 
       seen.add(questionText);
       result.push({
-        id:       result.length + 1,
+        id: result.length + 1,
         question: questionText,
-        options:  optionsNormalized,
-        correct:  correctNormalized
+        options: optionsNormalized,
+        correct: correctNormalized
       });
     }
 
@@ -325,20 +323,20 @@ Output ONLY this JSON format:
     }
 
     res.json({
-      success:    true,
-      questions:  result,
-      count:      result.length,
+      success: true,
+      questions: result,
+      count: result.length,
       difficulty: cleanDifficulty,
       chapterName: cleanChapter,
       subjectName: cleanSubject,
-      createdAt:  new Date()
+      createdAt: new Date()
     });
 
   } catch (error) {
     console.error("❌ Mock generation error:", error.message);
     res.status(500).json({
       success: false,
-      error:   error.message || "Failed to generate mock test"
+      error: error.message || "Failed to generate mock test"
     });
   }
 });
