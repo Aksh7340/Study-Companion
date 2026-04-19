@@ -230,10 +230,10 @@ Output ONLY this JSON format:
 ]`;
 
     const response = await groq.chat.completions.create({
-      model: "moonshotai/kimi-k2-instruct-0905",
+      model: "llama-3.3-70b-versatile",
 
       // temperature 0.4 — slightly higher for diverse MCQ generation
-      // kimi-k2 excels at structured JSON output and instruction following
+      // llama3 excels at structured JSON output and instruction following
       // Lower temperature produces more reliable JSON structure and more
       // on-topic questions. 0.8 was causing JSON format errors and off-topic drift.
       temperature: 0.4,
