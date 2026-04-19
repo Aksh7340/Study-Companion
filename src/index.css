@@ -149,6 +149,13 @@ body {
   box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
 }
 
+/* Hide browser-native password reveal icon (Edge / Chrome) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  display: none !important;
+}
+
 /* =============================================
    Layout helpers
 ============================================= */

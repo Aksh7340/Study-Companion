@@ -12,25 +12,25 @@ const Icon = ({ d, size = 20 }) => (
 
 const icons = {
   dashboard: "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10",
-  setup:      "M12 5v14M5 12h14",
-  logout:     "M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4 M16 17l5-5-5-5 M21 12H9",
-  chevronL:   "M15 18l-6-6 6-6",
-  chevronR:   "M9 18l6-6-6-6",
-  close:      "M18 6L6 18M6 6l12 12",
-  total:      "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
-  completed:  "M22 11.08V12a10 10 0 11-5.93-9.14 M22 4L12 14.01l-3-3",
-  active:     "M13 10V3L4 14h7v7l9-11h-7z",
-  urgent:     "M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z M12 9v4 M12 17h.01",
-  subjects:   "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
-  progress:   "M18 20V10 M12 20V4 M6 20v-6",
+  setup: "M12 5v14M5 12h14",
+  logout: "M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4 M16 17l5-5-5-5 M21 12H9",
+  chevronL: "M15 18l-6-6 6-6",
+  chevronR: "M9 18l6-6-6-6",
+  close: "M18 6L6 18M6 6l12 12",
+  total: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
+  completed: "M22 11.08V12a10 10 0 11-5.93-9.14 M22 4L12 14.01l-3-3",
+  active: "M13 10V3L4 14h7v7l9-11h-7z",
+  urgent: "M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z M12 9v4 M12 17h.01",
+  subjects: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+  progress: "M18 20V10 M12 20V4 M6 20v-6",
 };
 
 /* ── Quick Stats ─────────────────────────────────────────────────────── */
 function buildStats(examData, subjects) {
-  const total     = examData.length;
+  const total = examData.length;
   const completed = examData.filter(e => getExamStatus(e, subjects) === "Completed").length;
-  const urgent    = examData.filter(e => getExamStatus(e, subjects) === "Urgent").length;
-  const active    = examData.filter(e => {
+  const urgent = examData.filter(e => getExamStatus(e, subjects) === "Urgent").length;
+  const active = examData.filter(e => {
     const s = getExamStatus(e, subjects);
     return ["In Progress", "Upcoming", "Urgent", "Ready"].includes(s);
   }).length;
@@ -42,12 +42,12 @@ function buildStats(examData, subjects) {
     );
   }
   return [
-    { label: "Total",     value: total,           icon: icons.total,     color: "text-indigo-600", bg: "bg-indigo-50",  border: "border-indigo-100" },
-    { label: "Done",      value: completed,        icon: icons.completed, color: "text-emerald-600",bg: "bg-emerald-50", border: "border-emerald-100" },
-    { label: "Active",    value: active,           icon: icons.active,    color: "text-blue-600",   bg: "bg-blue-50",    border: "border-blue-100" },
-    { label: "Urgent",    value: urgent,           icon: icons.urgent,    color: "text-red-600",    bg: "bg-red-50",     border: "border-red-100" },
-    { label: "Subjects",  value: totalSubs,        icon: icons.subjects,  color: "text-purple-600", bg: "bg-purple-50",  border: "border-purple-100" },
-    { label: "Progress",  value: `${avgProgress}%`,icon: icons.progress,  color: "text-amber-600",  bg: "bg-amber-50",   border: "border-amber-100" },
+    { label: "Total", value: total, icon: icons.total, color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-100" },
+    { label: "Done", value: completed, icon: icons.completed, color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-100" },
+    { label: "Active", value: active, icon: icons.active, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
+    { label: "Urgent", value: urgent, icon: icons.urgent, color: "text-red-600", bg: "bg-red-50", border: "border-red-100" },
+    { label: "Subjects", value: totalSubs, icon: icons.subjects, color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100" },
+    { label: "Progress", value: `${avgProgress}%`, icon: icons.progress, color: "text-amber-600", bg: "bg-amber-50", border: "border-amber-100" },
   ];
 }
 
@@ -81,11 +81,11 @@ export default function Sidebar({ examData = [], subjects = [], mobileOpen, onMo
       onCollapseChange(next);
     }
   };
-  const navigate  = useNavigate();
-  const location  = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const token        = localStorage.getItem("token");
-  const hiddenPaths  = ["/", "/auth"];
+  const token = localStorage.getItem("token");
+  const hiddenPaths = ["/", "/auth"];
   if (!token || hiddenPaths.includes(location.pathname)) return null;
 
   const stats = buildStats(examData, subjects);
@@ -105,12 +105,12 @@ export default function Sidebar({ examData = [], subjects = [], mobileOpen, onMo
 
         {/* ── Logo row ── */}
         <div className={`flex items-center border-b border-slate-100 flex-shrink-0
-          ${isCollapsed ? "justify-center px-0 py-4" : "gap-3 px-4 py-4"}`}>
-          <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center flex-shrink-0 shadow-sm">
-            <span className="text-white font-extrabold text-xs leading-none">SC</span>
+          ${isCollapsed ? "pl-3 py-4" : "gap-3 px-4 py-4"}`}>
+          <div className={`${isCollapsed ? "w-6 h-6" : "w-8 h-8"} rounded-lg gradient-primary flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-200`}>
+            <span className={`text-white font-extrabold leading-none ${isCollapsed ? "text-[10px]" : "text-xs"}`}>SC</span>
           </div>
           {!isCollapsed && (
-            <span className="font-bold text-slate-800 text-sm leading-tight truncate">
+            <span className="font-bold text-slate-800  text-sm leading-tight truncate text-gray-900  ">
               Study Companion
             </span>
           )}
@@ -124,7 +124,7 @@ export default function Sidebar({ examData = [], subjects = [], mobileOpen, onMo
             </p>
           )}
           <NavItem to="/dashboard" iconPath={icons.dashboard} label="Dashboard" collapsed={isCollapsed} />
-          <NavItem to="/setup"     iconPath={icons.setup}     label="Setup"     collapsed={isCollapsed} />
+          <NavItem to="/setup" iconPath={icons.setup} label="Setup" collapsed={isCollapsed} />
         </nav>
 
         {/* ── Quick Stats ── */}

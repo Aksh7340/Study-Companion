@@ -38,7 +38,11 @@ export default function MockTestPage({ subjects, updateChapter }) {
         const token = localStorage.getItem("token");
         const res = await api.post(
           "/ai/generate-mock",
-          { chapterName: chapter?.name, difficulty: subject?.difficulty },
+          { 
+            chapterName: chapter?.name, 
+            difficulty: subject?.difficulty,
+            subjectName: subject?.name
+          },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setQuestions(res.data.questions || []);

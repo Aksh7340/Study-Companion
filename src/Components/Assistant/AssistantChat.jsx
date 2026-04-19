@@ -8,6 +8,7 @@ export default function AssistantChat({
   chapter,
   subjectId,
   chapterId,
+  subjectName,
   updateChapter
 }) {
 
@@ -56,7 +57,8 @@ export default function AssistantChat({
 
       const aiRes = await api.post("/ai/assistant", {
         question,
-        chapterName: chapter.name
+        chapterName: chapter.name,
+        subjectName
       });
 
       const answer = aiRes.data.answer;

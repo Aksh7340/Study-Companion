@@ -142,7 +142,7 @@ export default function ChapterDetails({ subjects, updateChapter }) {
             <span className="w-1 h-5 rounded-full bg-blue-500 inline-block" />
             AI Study Assistant
           </h2>
-          <AssistantChat chapter={chapter} subjectId={subjectId} chapterId={chapterId} updateChapter={updateChapter} />
+          <AssistantChat chapter={chapter} subjectId={subjectId} chapterId={chapterId} subjectName={subject.name} updateChapter={updateChapter} />
         </div>
       </div>
 
