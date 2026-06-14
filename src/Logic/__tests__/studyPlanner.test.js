@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   remainingDays,
   getDifficultyWeight,
@@ -505,7 +505,6 @@ describe("getExamProgress", () => {
   });
 
   it("should handle string and number examIds", () => {
-    const examId = "exam1";
     const subjects = [
       {
         _id: "subj1",

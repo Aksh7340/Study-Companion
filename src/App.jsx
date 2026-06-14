@@ -76,6 +76,8 @@ function App() {
     try {
       await api.delete(`/exams/${examId}`);
       setExamData(prev => prev.filter(exam => String(exam._id) !== String(examId)));
+      // Cascade: remove subjects that belonged to this exam
+      setSubjects(prev => prev.filter(sub => String(sub.examId) !== String(examId)));
     } catch (error) {
       setDataError(error?.response?.data?.message || "Failed to delete exam");
     }

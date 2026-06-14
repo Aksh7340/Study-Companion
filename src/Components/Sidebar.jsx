@@ -1,4 +1,4 @@
-import { useState } from "react";
+// removed unused useState
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { getExamStatus, getExamProgress } from "../Logic/studyPlanner";
 
@@ -34,7 +34,8 @@ function buildStats(examData, subjects) {
     const s = getExamStatus(e, subjects);
     return ["In Progress", "Upcoming", "Urgent", "Ready"].includes(s);
   }).length;
-  const totalSubs = subjects.length;
+  const examIds = new Set(examData.map(e => String(e._id)));
+  const totalSubs = subjects.filter(s => examIds.has(String(s.examId))).length;
   let avgProgress = 0;
   if (total > 0) {
     avgProgress = Math.round(
@@ -73,6 +74,101 @@ function NavItem({ to, iconPath, label, collapsed }) {
   );
 }
 
+/* ── Inner content (shared between desktop + mobile) ─────────────── */
+function SidebarInner({ isMobile = false, collapsed, examData, stats, handleLogout }) {
+  const isCollapsed = collapsed && !isMobile;
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+
+      {/* ── Logo row ── */}
+      <div className={`flex items-center border-b border-slate-100 flex-shrink-0
+        ${isCollapsed ? "pl-3 py-4" : "gap-3 px-4 py-4"}`}>
+        <div className={`${isCollapsed ? "w-6 h-6" : "w-8 h-8"} rounded-lg gradient-primary flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-200`}>
+          <span className={`text-white font-extrabold leading-none ${isCollapsed ? "text-[10px]" : "text-xs"}`}>SC</span>
+        </div>
+        {!isCollapsed && (
+          <span className="font-bold text-slate-800  text-sm leading-tight truncate text-gray-900  ">
+            Study Companion
+          </span>
+        )}
+      </div>
+
+      {/* ── Navigation ── */}
+      <nav className={`flex flex-col gap-1 py-3 flex-shrink-0 ${isCollapsed ? "px-1" : "px-3"}`}>
+        {!isCollapsed && (
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">
+            Menu
+          </p>
+        )}
+        <NavItem to="/dashboard" iconPath={icons.dashboard} label="Dashboard" collapsed={isCollapsed} />
+        <NavItem to="/setup" iconPath={icons.setup} label="Setup" collapsed={isCollapsed} />
+      </nav>
+
+      {/* ── Quick Stats ── */}
+      {examData.length > 0 && (
+        <div className={`border-t border-slate-100 flex-shrink-0 ${isCollapsed ? "px-1 py-3" : "px-3 py-3"}`}>
+          {!isCollapsed && (
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1 mb-2">
+              Quick Stats
+            </p>
+          )}
+
+          {isCollapsed ? (
+            /* Icon-only stats */
+            <div className="flex flex-col items-center gap-2">
+              {stats.map(stat => (
+                <div
+                  key={stat.label}
+                  title={`${stat.label}: ${stat.value}`}
+                  className={`w-10 h-10 rounded-xl border ${stat.bg} ${stat.border} ${stat.color}
+                    flex items-center justify-center cursor-default`}
+                >
+                  <Icon d={stat.icon} size={16} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* 2-col grid stats */
+            <div className="grid grid-cols-2 gap-1.5">
+              {stats.map(stat => (
+                <div
+                  key={stat.label}
+                  className={`${stat.bg} border ${stat.border} rounded-xl p-2 animate-fade-in`}
+                >
+                  <div className={`${stat.color} mb-0.5`}>
+                    <Icon d={stat.icon} size={14} />
+                  </div>
+                  <p className="text-base font-bold text-slate-800 leading-none">{stat.value}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Spacer */}
+      <div className="flex-1 min-h-0" />
+
+      {/* ── Logout ── */}
+      <div className={`border-t border-slate-100 flex-shrink-0 py-3 ${isCollapsed ? "px-1" : "px-3"}`}>
+        <button
+          onClick={handleLogout}
+          title="Logout"
+          className={`flex items-center gap-3 rounded-xl text-sm font-semibold text-red-500
+            hover:bg-red-50 transition-all duration-200
+            ${isCollapsed ? "w-10 h-10 mx-auto justify-center" : "w-full px-3 py-2.5"}`}
+        >
+          <span className="flex-shrink-0 flex items-center justify-center">
+            <Icon d={icons.logout} size={18} />
+          </span>
+          {!isCollapsed && <span>Logout</span>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main Sidebar Component ─────────────────────────────────────────── */
 export default function Sidebar({ examData = [], subjects = [], mobileOpen, onMobileClose, collapsed = false, onCollapseChange }) {
   const setCollapsed = (val) => {
@@ -97,100 +193,7 @@ export default function Sidebar({ examData = [], subjects = [], mobileOpen, onMo
     navigate("/");
   }
 
-  /* ── Inner content (shared between desktop + mobile) ─────────────── */
-  const SidebarInner = ({ isMobile = false }) => {
-    const isCollapsed = collapsed && !isMobile;
-    return (
-      <div className="flex flex-col h-full overflow-hidden">
 
-        {/* ── Logo row ── */}
-        <div className={`flex items-center border-b border-slate-100 flex-shrink-0
-          ${isCollapsed ? "pl-3 py-4" : "gap-3 px-4 py-4"}`}>
-          <div className={`${isCollapsed ? "w-6 h-6" : "w-8 h-8"} rounded-lg gradient-primary flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-200`}>
-            <span className={`text-white font-extrabold leading-none ${isCollapsed ? "text-[10px]" : "text-xs"}`}>SC</span>
-          </div>
-          {!isCollapsed && (
-            <span className="font-bold text-slate-800  text-sm leading-tight truncate text-gray-900  ">
-              Study Companion
-            </span>
-          )}
-        </div>
-
-        {/* ── Navigation ── */}
-        <nav className={`flex flex-col gap-1 py-3 flex-shrink-0 ${isCollapsed ? "px-1" : "px-3"}`}>
-          {!isCollapsed && (
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">
-              Menu
-            </p>
-          )}
-          <NavItem to="/dashboard" iconPath={icons.dashboard} label="Dashboard" collapsed={isCollapsed} />
-          <NavItem to="/setup" iconPath={icons.setup} label="Setup" collapsed={isCollapsed} />
-        </nav>
-
-        {/* ── Quick Stats ── */}
-        {examData.length > 0 && (
-          <div className={`border-t border-slate-100 flex-shrink-0 ${isCollapsed ? "px-1 py-3" : "px-3 py-3"}`}>
-            {!isCollapsed && (
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1 mb-2">
-                Quick Stats
-              </p>
-            )}
-
-            {isCollapsed ? (
-              /* Icon-only stats */
-              <div className="flex flex-col items-center gap-2">
-                {stats.map(stat => (
-                  <div
-                    key={stat.label}
-                    title={`${stat.label}: ${stat.value}`}
-                    className={`w-10 h-10 rounded-xl border ${stat.bg} ${stat.border} ${stat.color}
-                      flex items-center justify-center cursor-default`}
-                  >
-                    <Icon d={stat.icon} size={16} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              /* 2-col grid stats */
-              <div className="grid grid-cols-2 gap-1.5">
-                {stats.map(stat => (
-                  <div
-                    key={stat.label}
-                    className={`${stat.bg} border ${stat.border} rounded-xl p-2 animate-fade-in`}
-                  >
-                    <div className={`${stat.color} mb-0.5`}>
-                      <Icon d={stat.icon} size={14} />
-                    </div>
-                    <p className="text-base font-bold text-slate-800 leading-none">{stat.value}</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Spacer */}
-        <div className="flex-1 min-h-0" />
-
-        {/* ── Logout ── */}
-        <div className={`border-t border-slate-100 flex-shrink-0 py-3 ${isCollapsed ? "px-1" : "px-3"}`}>
-          <button
-            onClick={handleLogout}
-            title="Logout"
-            className={`flex items-center gap-3 rounded-xl text-sm font-semibold text-red-500
-              hover:bg-red-50 transition-all duration-200
-              ${isCollapsed ? "w-10 h-10 mx-auto justify-center" : "w-full px-3 py-2.5"}`}
-          >
-            <span className="flex-shrink-0 flex items-center justify-center">
-              <Icon d={icons.logout} size={18} />
-            </span>
-            {!isCollapsed && <span>Logout</span>}
-          </button>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <>
@@ -222,7 +225,7 @@ export default function Sidebar({ examData = [], subjects = [], mobileOpen, onMo
         </button>
 
         <div className="overflow-hidden h-full">
-          <SidebarInner />
+          <SidebarInner collapsed={collapsed} examData={examData} stats={stats} handleLogout={handleLogout} />
         </div>
       </aside>
 
@@ -249,7 +252,7 @@ export default function Sidebar({ examData = [], subjects = [], mobileOpen, onMo
         >
           <Icon d={icons.close} size={14} />
         </button>
-        <SidebarInner isMobile />
+        <SidebarInner isMobile collapsed={collapsed} examData={examData} stats={stats} handleLogout={handleLogout} />
       </aside>
     </>
   );

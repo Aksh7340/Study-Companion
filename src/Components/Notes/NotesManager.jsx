@@ -43,6 +43,7 @@ export default function NotesManager({
       loadNotes();
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subjectId, chapterId]);
 
 

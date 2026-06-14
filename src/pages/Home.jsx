@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const features = [
   {
@@ -42,11 +42,7 @@ const features = [
 
 export default function Home() {
   const navigate = useNavigate();
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    setToken(localStorage.getItem("token"));
-  }, []);
+  const [token] = useState(() => localStorage.getItem("token"));
 
   function handleStart() {
     navigate(token ? "/dashboard" : "/auth");

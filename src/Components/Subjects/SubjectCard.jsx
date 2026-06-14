@@ -8,7 +8,7 @@ const difficultyBadge = {
   Hard:   "bg-red-100 text-red-700",
 };
 
-export default function SubjectCard({ subject, weight, hours, examId, deleteSubject }) {
+export default function SubjectCard({ subject, hours, examId, deleteSubject }) {
 
   const navigate = useNavigate();
   if (!subject) return null;

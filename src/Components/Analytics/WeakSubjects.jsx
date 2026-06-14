@@ -2,17 +2,15 @@ import { getSubjectProgress } from "../../Logic/studyPlanner";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../UI/ProgressBar";
 
-export default function WeakSubjects({ subjects, examId }) {
+export default function WeakSubjects({ subjects, examData }) {
 
   const navigate = useNavigate();
 
-  const examSubjects = subjects.filter(
-    s => String(s.examId) === String(examId)
-  );
-
-  const weakSubjects = examSubjects.filter(
-    subject => getSubjectProgress(subject) < 50
-  );
+  const weakSubjects = subjects.filter(subject => {
+    const examExists = examData.some(e => String(e._id) === String(subject.examId));
+    if (!examExists) return false;
+    return getSubjectProgress(subject) < 50;
+  });
 
   return (
     <div className="h-full">
@@ -34,7 +32,7 @@ export default function WeakSubjects({ subjects, examId }) {
             return (
               <div
                 key={subject._id}
-                onClick={() => navigate(`/dashboard/${examId}/${subject._id}`)}
+                onClick={() => navigate(`/dashboard/${subject.examId}/${subject._id}`)}
                 className="border border-slate-100 rounded-xl p-3 hover:border-indigo-200
                   hover:bg-indigo-50/50 cursor-pointer transition-all duration-200 group"
               >

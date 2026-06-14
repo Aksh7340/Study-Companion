@@ -2,13 +2,17 @@ import { getChapterProgress } from "../../Logic/studyPlanner";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../UI/ProgressBar";
 
-export default function WeakChapters({ subjects }) {
+export default function WeakChapters({ subjects, examData }) {
 
   const navigate = useNavigate();
 
   const weakChapters = [];
 
   subjects.forEach(subject => {
+    // Defensive check: only process if the exam still exists in state
+    const examExists = examData.some(e => String(e._id) === String(subject.examId));
+    if (!examExists) return;
+
     subject.chapters?.forEach(chapter => {
       const progress = getChapterProgress(chapter);
       if (progress < 50) {

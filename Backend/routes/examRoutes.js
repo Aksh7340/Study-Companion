@@ -1,5 +1,6 @@
 import express from "express";
 import Exam from "../models/Exam.js";
+import Subject from "../models/Subject.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -66,8 +67,13 @@ router.put("/:id", authMiddleware, async (req, res) => {
 
 });
 
-/* Delete exam */
+/* Delete exam + cascade-delete its subjects */
 router.delete("/:id", authMiddleware, async (req, res) => {
+
+  await Subject.deleteMany({
+    examId: req.params.id,
+    userId: req.user.userId
+  });
 
   await Exam.findOneAndDelete({
     _id: req.params.id,

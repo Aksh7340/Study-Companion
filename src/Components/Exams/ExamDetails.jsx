@@ -16,7 +16,7 @@ const statusConfig = {
   "Incomplete":  { color: "bg-rose-100 text-rose-700",       dot: "bg-rose-500" },
 };
 
-export default function ExamDetails({ examData, subjects, updateExam, deleteSubject }) {
+export default function ExamDetails({ examData, subjects, updateExam }) {
 
   const { examId } = useParams();
   const navigate   = useNavigate();

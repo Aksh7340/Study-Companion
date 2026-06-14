@@ -44,6 +44,7 @@ export default function AssistantChat({
 
     if (chapterId) loadChats();
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterId]);
 
 

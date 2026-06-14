@@ -16,20 +16,20 @@ import { useNavigate } from "react-router-dom";
 export default function MockResult({ result, examId, subjectId, chapterId, saving }) {
 
   const navigate = useNavigate();
-  const pct      = result.total > 0 ? Math.round((result.score / result.total) * 100) : 0;
+  const pct = result.total > 0 ? Math.round((result.score / result.total) * 100) : 0;
 
   // Tiered grading logic based on the percentage score
   const grade =
     pct >= 90 ? { label: "Excellent!", emoji: "🏆", color: "text-emerald-600" } :
-    pct >= 75 ? { label: "Great Job!",  emoji: "🎉", color: "text-blue-600" } :
-    pct >= 50 ? { label: "Good Try!",   emoji: "👍", color: "text-amber-600" } :
-                { label: "Keep Going!", emoji: "💪", color: "text-red-500"   };
+      pct >= 75 ? { label: "Great Job!", emoji: "🎉", color: "text-blue-600" } :
+        pct >= 50 ? { label: "Good Try!", emoji: "👍", color: "text-amber-600" } :
+          { label: "Keep Going!", emoji: "💪", color: "text-red-500" };
 
   /* Fill colour based on score */
   const fillClass =
     pct >= 75 ? "from-emerald-400 to-emerald-500" :
-    pct >= 50 ? "from-amber-400 to-orange-500" :
-                "from-red-400 to-rose-500";
+      pct >= 50 ? "from-amber-400 to-orange-500" :
+        "from-red-400 to-rose-500";
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-10 animate-fade-in">
@@ -94,12 +94,7 @@ export default function MockResult({ result, examId, subjectId, chapterId, savin
             >
               ← Back to Chapter
             </button>
-            <button
-              onClick={() => navigate(`/dashboard/${examId}/${subjectId}/${chapterId}/mock`)}
-              className="btn-ghost w-full py-3 text-sm"
-            >
-              🔄 Retry Test
-            </button>
+
           </div>
 
         </div>

@@ -97,7 +97,7 @@ TONE: Be clear, encouraging, and student-friendly. Do not be robotic. Do not rep
     //    chapter-specific one. Now the question is passed as-is.
 
     const response = await groq.chat.completions.create({
-      model: "llama3-70b-8192",
+      model: "llama-3.3-70b-versatile",
 
       // BUG FIX: temperature 0.7 → 0.3
       // Lower temperature = more focused, factual, on-topic responses.

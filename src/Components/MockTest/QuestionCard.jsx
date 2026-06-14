@@ -1,3 +1,5 @@
+import React from "react";
+
 /**
  * =========================================
  * NEW FEATURE: CUSTOM QUESTION CARD UI
@@ -13,9 +15,11 @@
  */
 export default function QuestionCard({ question, index, selected, onSelect }) {
 
+  const reactId = React.useId();
+
   if (!question) return null;
 
-  const groupName = `question-${question.id || Math.random()}`;
+  const groupName = `question-${question.id || reactId}`;
   const options   = question.options || [];
 
   return (

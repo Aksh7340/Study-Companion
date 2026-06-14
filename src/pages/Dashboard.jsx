@@ -106,10 +106,10 @@ export default function Dashboard({ examData = [], deleteExam, subjects = [], lo
         </div>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 card-hover">
-            <WeakSubjects subjects={subjects} examId={examData[0]?._id} />
+            <WeakSubjects subjects={subjects} examData={examData} />
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 card-hover">
-            <WeakChapters subjects={subjects} />
+            <WeakChapters subjects={subjects} examData={examData} />
           </div>
         </div>
       </section>
